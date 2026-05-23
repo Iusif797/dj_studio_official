@@ -1,0 +1,8 @@
+{
+  "name": "BECKERMAN // ANALOG ROTARY DJ SYSTEM",
+  "description": "Кинематографичный высокопремиальный интерактивный лендинг люксового диджейского пульта BECKERMAN в Праге. Объектно-центрированная анимация скролла (scroll-scrub), прецизионные визуалы, вшитый симулятор управления аналоговым микшером с реальным синтезом звука Web Audio.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
