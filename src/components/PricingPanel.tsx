@@ -43,48 +43,48 @@ export default function PricingPanel({ t, onBook, onSpec }: PricingPanelProps) {
   ];
 
   return (
-    <div className="w-full max-w-full md:max-w-xl space-y-4 sm:space-y-5">
-      <div className="space-y-2">
-        <span className="font-mono text-[7px] sm:text-[8px] tracking-[0.28em] sm:tracking-[0.3em] text-[#ff7849] uppercase block font-semibold">
+    <div className="w-full max-w-full md:max-w-xl space-y-3 sm:space-y-5">
+      <div className="space-y-1.5 sm:space-y-2">
+        <span className="font-mono text-[7px] sm:text-[8px] tracking-[0.25em] sm:tracking-[0.3em] text-[#ff7849] uppercase block font-semibold">
           {t.pricingSub}
         </span>
-        <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-light text-white tracking-wide leading-tight">
+        <h2 className="font-serif text-xl sm:text-2xl md:text-4xl font-light text-white tracking-wide leading-tight">
           {t.pricingTitle}
         </h2>
-        <p className="font-sans text-[11px] sm:text-xs text-white/55 leading-relaxed font-light">
+        <p className="font-sans text-[10px] sm:text-xs text-white/55 leading-relaxed font-light">
           {t.pricingDesc}
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-2.5 sm:gap-3 max-h-[42dvh] sm:max-h-none overflow-y-auto overscroll-contain md:overflow-visible">
+      <div className="grid grid-cols-1 gap-2 sm:gap-3 max-h-[36dvh] sm:max-h-[42dvh] md:max-h-none overflow-y-auto overscroll-contain md:overflow-visible">
         {tiers.map((tier) => (
           <article
             key={tier.name}
-            className={`relative border p-4 md:p-5 transition-colors ${
+            className={`relative border p-3 sm:p-4 md:p-5 transition-all duration-300 ${
               tier.featured
                 ? 'border-[#ff7849]/40 bg-[#ff7849]/5 shadow-[0_0_40px_rgba(255,120,73,0.08)]'
                 : 'border-white/10 bg-[#090909]/90'
             }`}
           >
             {tier.featured && (
-              <span className="absolute -top-2.5 right-4 font-mono text-[7px] tracking-[0.2em] uppercase bg-[#ff7849] text-white px-2 py-0.5">
+              <span className="absolute -top-2 right-3 sm:-top-2.5 sm:right-4 font-mono text-[6px] sm:text-[7px] tracking-[0.2em] uppercase bg-[#ff7849] text-white px-1.5 sm:px-2 py-0.5">
                 {t.pricingFeaturedBadge}
               </span>
             )}
-            <div className="flex items-start justify-between gap-4 mb-3">
-              <div>
-                <span className="font-mono text-[7px] tracking-[0.22em] text-white/40 uppercase block mb-1">
+            <div className="flex items-start justify-between gap-3 mb-2 sm:mb-3">
+              <div className="min-w-0">
+                <span className="font-mono text-[6px] sm:text-[7px] tracking-[0.22em] text-white/40 uppercase block mb-0.5 sm:mb-1">
                   {tier.tag}
                 </span>
-                <h3 className="font-serif text-xl text-white font-light">{tier.name}</h3>
-                <p className="font-mono text-[9px] text-white/45 mt-1 uppercase tracking-wider">{tier.duration}</p>
+                <h3 className="font-serif text-base sm:text-lg md:text-xl text-white font-light leading-tight">{tier.name}</h3>
+                <p className="font-mono text-[8px] sm:text-[9px] text-white/45 mt-0.5 sm:mt-1 uppercase tracking-wider">{tier.duration}</p>
               </div>
-              <p className="font-serif text-xl sm:text-2xl text-[#ff7849] whitespace-nowrap">{tier.price}</p>
+              <p className="font-serif text-base sm:text-xl md:text-2xl text-[#ff7849] whitespace-nowrap shrink-0">{tier.price}</p>
             </div>
-            <ul className="space-y-1.5 border-t border-white/5 pt-3">
+            <ul className="space-y-1 sm:space-y-1.5 border-t border-white/5 pt-2 sm:pt-3">
               {tier.features.map((feature) => (
-                <li key={feature} className="flex items-start gap-2 text-[11px] text-white/65 font-light">
-                  <Check size={12} className="text-[#ff7849] mt-0.5 shrink-0" />
+                <li key={feature} className="flex items-start gap-1.5 sm:gap-2 text-[10px] sm:text-[11px] text-white/65 font-light">
+                  <Check size={11} className="text-[#ff7849] mt-0.5 shrink-0" />
                   <span>{feature}</span>
                 </li>
               ))}
@@ -93,21 +93,28 @@ export default function PricingPanel({ t, onBook, onSpec }: PricingPanelProps) {
         ))}
       </div>
 
-      <p className="font-mono text-[8px] text-white/35 tracking-wide uppercase">{t.pricingNote}</p>
-
-      <div className="flex flex-col sm:flex-row gap-3">
+      <div className="grid grid-cols-2 gap-2 sm:gap-3">
         <button
           onClick={onBook}
-          className="flex-1 px-4 py-3 bg-white text-black font-mono text-[10px] tracking-widest uppercase hover:bg-[#ff7849] hover:text-white transition-all duration-500 rounded-none cursor-pointer border-none"
+          className="w-full px-3 sm:px-4 py-2.5 sm:py-3.5 bg-white text-black font-mono text-[8px] sm:text-[10px] tracking-widest uppercase hover:bg-[#ff7849] hover:text-white transition-all duration-500 rounded-none cursor-pointer border border-transparent"
         >
           {t.btnBookSetBeckerman}
         </button>
         <button
           onClick={onSpec}
-          className="flex-1 px-4 py-3 border border-white/10 hover:border-white/25 text-white font-mono text-[10px] tracking-widest uppercase hover:bg-white/5 transition-all duration-500 rounded-none cursor-pointer bg-transparent"
+          className="w-full px-3 sm:px-4 py-2.5 sm:py-3.5 border border-white/10 hover:border-white/25 text-white font-mono text-[8px] sm:text-[10px] tracking-widest uppercase hover:bg-white/5 transition-all duration-500 rounded-none cursor-pointer bg-transparent"
         >
           {t.btnDetailsRider}
         </button>
+      </div>
+
+      <div className="border-t border-white/8 pt-3 sm:pt-5 mt-1 flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-0">
+        <span className="font-mono text-[7px] sm:text-[8px] text-white/35 tracking-[0.2em] uppercase">© 2025 Beckerman</span>
+        <div className="flex items-center gap-3 sm:gap-5">
+          <a href="https://instagram.com/dj_beckerman" target="_blank" rel="noopener noreferrer" className="font-mono text-[8px] sm:text-[9px] text-white/45 hover:text-[#ff7849] transition-colors tracking-wider uppercase">Instagram</a>
+          <a href="https://soundcloud.com/beckerman" target="_blank" rel="noopener noreferrer" className="font-mono text-[8px] sm:text-[9px] text-white/45 hover:text-[#ff7849] transition-colors tracking-wider uppercase">SoundCloud</a>
+          <a href="https://www.mixcloud.com/beckerman" target="_blank" rel="noopener noreferrer" className="font-mono text-[8px] sm:text-[9px] text-white/45 hover:text-[#ff7849] transition-colors tracking-wider uppercase">Mixcloud</a>
+        </div>
       </div>
     </div>
   );

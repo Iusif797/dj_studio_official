@@ -119,12 +119,12 @@ export default function SpecOverlay({ isOpen, onClose, lang = 'en' }: SpecOverla
           <div className="text-center md:text-left">
             <Compass className="w-4 h-4 text-[#ff7849] mb-1.5 mx-auto md:mx-0" />
             <p className="font-mono text-[8px] text-white/40 uppercase">{t.specMon}</p>
-            <p className="font-serif text-[11px] text-white mt-0.5 font-light font-sans leading-tight">{t.specMonVal}</p>
+            <p className="font-sans text-[11px] text-white mt-0.5 font-light leading-tight">{t.specMonVal}</p>
           </div>
           <div className="text-center md:text-left">
             <Award className="w-4 h-4 text-[#ff7849] mb-1.5 mx-auto md:mx-0" />
             <p className="font-mono text-[8px] text-white/40 uppercase">{t.specCab}</p>
-            <p className="font-serif text-xs text-white mt-0.5 font-light font-mono leading-none">{t.specCabVal}</p>
+            <p className="font-mono text-xs text-white mt-0.5 font-light leading-none">{t.specCabVal}</p>
           </div>
         </div>
       </motion.div>

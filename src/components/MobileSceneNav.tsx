@@ -1,6 +1,7 @@
 type Section = {
   num: string;
   key: string;
+  label?: string;
 };
 
 type MobileSceneNavProps = {
@@ -10,12 +11,14 @@ type MobileSceneNavProps = {
 };
 
 export default function MobileSceneNav({ sections, activeKey, onSelect }: MobileSceneNavProps) {
+  const activeIndex = sections.findIndex(s => s.key === activeKey);
+
   return (
     <nav
       aria-label="Scene navigation"
-      className="fixed bottom-[10.25rem] left-3 right-3 z-[45] md:hidden pointer-events-auto"
+      className="md:hidden pointer-events-auto w-full"
     >
-      <div className="flex gap-1.5 overflow-x-auto no-scrollbar bg-black/80 border border-white/10 backdrop-blur-md px-2 py-2">
+      <div className="flex items-center justify-center gap-2.5 py-2">
         {sections.map((section, index) => {
           const isActive = activeKey === section.key;
           return (
@@ -23,13 +26,16 @@ export default function MobileSceneNav({ sections, activeKey, onSelect }: Mobile
               key={section.num}
               type="button"
               onClick={() => onSelect(index)}
-              className={`shrink-0 min-w-[2.25rem] font-mono text-[9px] tracking-wider px-2 py-1.5 border transition-colors ${
-                isActive
-                  ? 'border-[#ff7849] text-[#ff7849] bg-[#ff7849]/10'
-                  : 'border-white/10 text-white/45 hover:text-white/75'
-              }`}
+              className="p-1 outline-none focus:outline-none cursor-pointer bg-transparent border-none"
+              aria-label={`Section ${section.num}`}
             >
-              {section.num}
+              <span
+                className={`block rounded-full transition-all duration-300 ${
+                  isActive
+                    ? 'w-5 h-1.5 bg-[#ff7849]'
+                    : 'w-1.5 h-1.5 bg-white/25'
+                }`}
+              />
             </button>
           );
         })}

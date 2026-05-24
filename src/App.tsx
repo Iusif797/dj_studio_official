@@ -14,7 +14,6 @@ import {
   RotateCw,
   Volume2,
   Calendar,
-  Music,
   Share2,
   Disc,
   X
@@ -170,8 +169,10 @@ export default function App() {
   ];
 
   const [scrollFraction, setScrollFraction] = useState(0);
+  const [scrollProgress, setScrollProgress] = useState(0);
   const [activeScene, setActiveScene] = useState<SceneKey>('intro');
   const [isScrolling, setIsScrolling] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   // Modals status
   const [isSpecOpen, setIsSpecOpen] = useState(false);
@@ -201,15 +202,21 @@ export default function App() {
 
   const scrollTimeoutRef = useRef<number | null>(null);
 
-  // Sync scroll positioning and page states
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoaded(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
+
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
       const windowHeight = window.innerHeight;
       const docHeight = document.documentElement.scrollHeight - windowHeight;
       const fraction = windowHeight > 0 ? scrollY / windowHeight : 0;
+      const progress = docHeight > 0 ? Math.min(1, scrollY / docHeight) : 0;
 
       setScrollFraction(fraction);
+      setScrollProgress(progress);
       setIsScrolling(true);
 
       const sceneIndex = Math.min(SCENE_KEYS.length - 1, Math.max(0, Math.floor(fraction)));
@@ -472,8 +479,11 @@ export default function App() {
   };
 
   return (
-    <div id="landing-root" className="relative h-[700vh] bg-[#050505] text-[#eaeaea] overflow-x-hidden">
-      {/* Real analog film grain overlay for raw underground warehouse texture */}
+    <div id="landing-root" className={`relative h-[700vh] bg-[#050505] text-[#eaeaea] overflow-x-hidden transition-opacity duration-[1200ms] ease-out ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
+      <div
+        className="fixed top-0 left-0 h-[2px] bg-gradient-to-r from-[#ff7849] to-[#ff7849]/60 z-[60] transition-[width] duration-150 ease-out"
+        style={{ width: `${scrollProgress * 100}%` }}
+      />
       <NoiseOverlay />
 
       {/* FIXED VIEWPORT BACKGROUND SCENERY CANVAS */}
@@ -695,24 +705,17 @@ export default function App() {
         })}
       </div>
 
-      {/* FIXED POSITION GRAPHIC HUD HEADS-UP OVERLAYS */}
-      <MobileSceneNav
-        sections={getLocalizedSections()}
-        activeKey={activeScene}
-        onSelect={scrollToSection}
-      />
-
       <div id="hud-container" className="hud-shell">
         
-        <header id="top-branding-bar" className="w-full flex flex-col gap-3 sm:gap-4 pointer-events-auto">
-          <div className="flex w-full items-start justify-between gap-3">
+        <header id="top-branding-bar" className="w-full pointer-events-auto">
+          <div className="flex w-full items-center justify-between gap-2">
             <div className="flex flex-col cursor-pointer min-w-0" onClick={() => scrollToSection(0)}>
-              <h1 className="font-serif text-[22px] sm:text-[26px] md:text-[32px] font-light leading-none tracking-[0.14em] sm:tracking-[0.18em] text-white">BECKERMAN</h1>
-              <span className="font-mono text-[7px] sm:text-[8px] tracking-[0.24em] sm:tracking-[0.34em] text-[#ff7849] uppercase mt-1 font-semibold line-clamp-2">{t.brandSub}</span>
+              <h1 className="font-serif text-[18px] sm:text-[22px] md:text-[32px] font-light leading-none tracking-[0.12em] sm:tracking-[0.16em] md:tracking-[0.18em] text-white">BECKERMAN</h1>
+              <span className="font-mono text-[6px] sm:text-[7px] md:text-[8px] tracking-[0.18em] sm:tracking-[0.28em] md:tracking-[0.34em] text-[#ff7849] uppercase mt-0.5 sm:mt-1 font-semibold line-clamp-1">{t.brandSub}</span>
             </div>
 
-            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-              <div className="flex items-center gap-1 border border-white/10 bg-black/50 px-1.5 sm:px-2 py-1 sm:py-1.5 font-mono select-none">
+            <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+              <div className="flex items-center border border-white/10 bg-black/50 px-1 sm:px-2 py-0.5 sm:py-1.5 font-mono select-none">
                 {(['en', 'cs', 'ru'] as const).map((l) => (
                   <button
                     key={l}
@@ -720,34 +723,16 @@ export default function App() {
                       playRotaryClick();
                       setLang(l);
                     }}
-                    className={`px-1 sm:px-1.5 py-px text-[8px] sm:text-[8.5px] uppercase tracking-wider transition-all duration-300 border-none bg-transparent cursor-pointer ${lang === l ? 'text-[#ff7849] font-bold border-b border-[#ff7849]' : 'text-white/45 hover:text-white'}`}
+                    className={`px-1 sm:px-1.5 py-px text-[7px] sm:text-[8.5px] uppercase tracking-wider transition-all duration-300 border-none bg-transparent cursor-pointer ${lang === l ? 'text-[#ff7849] font-bold' : 'text-white/45 hover:text-white'}`}
                   >
                     {l}
                   </button>
                 ))}
               </div>
-              <button
-                onClick={() => { playGlassTap(); setIsBookOpen(true); }}
-                className="px-3 sm:px-5 py-2 sm:py-2.5 bg-white text-black font-mono text-[8px] sm:text-[9px] tracking-[0.18em] sm:tracking-[0.25em] uppercase hover:bg-[#ff7849] hover:text-white transition-all duration-500 rounded-none shadow-xl outline-none focus:outline-none cursor-pointer md:hidden"
-              >
-                {t.btnBookSet}
-              </button>
             </div>
           </div>
 
-          <div className="hidden lg:flex items-center justify-end gap-10 border border-white/10 bg-black/60 backdrop-blur-md px-6 py-3 w-fit ml-auto">
-            <div className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#ff7849] animate-pulse" />
-              <span className="font-mono text-[9px] tracking-widest uppercase text-white/50">{t.brandStatus}</span>
-            </div>
-            <span className="w-px h-3 bg-white/10" />
-            <div className="flex items-center gap-1.5">
-              <Music size={11} className="text-[#ff7849]" />
-              <span className="font-mono text-[9px] tracking-widest text-white/70">{t.brandBpm}</span>
-            </div>
-          </div>
-
-          <div className="hidden md:flex items-center justify-end gap-3 w-full">
+          <div className={`hidden md:flex items-center justify-end gap-3 w-full mt-4 transition-all duration-500 ${activeScene === 'pricing' ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
             <AudioPlayer />
             <button
               onClick={() => { playGlassTap(); setIsBookOpen(true); }}
@@ -759,27 +744,17 @@ export default function App() {
         </header>
 
         {/* BOTTOM INFORMATIONAL BAR */}
-        <div id="bottom-hud-bar" className="w-full flex flex-col gap-3 sm:gap-4 md:flex-row md:justify-between items-stretch md:items-end pointer-events-auto">
-          <div className="hidden sm:flex items-center gap-3 bg-black/55 border border-white/5 backdrop-blur-md px-3 sm:px-4 py-2 sm:py-2.5 font-mono text-[7px] sm:text-[8px] text-white/40 tracking-widest uppercase">
-            <Compass size={11} className="text-[#ff7849] animate-[spin_10s_linear_infinite] shrink-0" />
-            <span className="line-clamp-2">{t.bottomCoordinates}</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-          </div>
+        <div id="bottom-hud-bar" className="w-full flex flex-col gap-1.5 sm:gap-3 pointer-events-auto">
+          <div className="hidden md:flex md:flex-row md:justify-between md:items-end w-full gap-4">
+            <div className="flex items-center gap-3 bg-black/55 border border-white/5 backdrop-blur-md px-4 py-2.5 font-mono text-[8px] text-white/40 tracking-widest uppercase">
+              <Compass size={11} className="text-[#ff7849] animate-[spin_10s_linear_infinite] shrink-0" />
+              <span>{t.bottomCoordinates}</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+            </div>
 
-          {scrollFraction < 6 && (
-            <>
+            {scrollFraction < 6 && (
               <div 
-                className="flex lg:hidden flex-col items-center gap-1 hover:opacity-100 opacity-70 transition-opacity cursor-pointer text-white/40 hover:text-white self-center"
-                onClick={() => {
-                  const currentIdx = Math.round(scrollFraction);
-                  scrollToSection(Math.min(6, currentIdx + 1));
-                }}
-              >
-                <span className="font-mono text-[7px] sm:text-[8px] tracking-[0.18em] uppercase text-center">{t.bottomScrollIntro}</span>
-                <ChevronDown size={14} className="animate-bounce" />
-              </div>
-              <div 
-                className="hidden lg:flex flex-col items-center gap-1 hover:opacity-100 opacity-60 transition-opacity cursor-pointer text-white/40 hover:text-white"
+                className="flex flex-col items-center gap-1 opacity-60 hover:opacity-100 transition-opacity cursor-pointer text-white/40 hover:text-white"
                 onClick={() => {
                   const currentIdx = Math.round(scrollFraction);
                   scrollToSection(Math.min(6, currentIdx + 1));
@@ -788,22 +763,44 @@ export default function App() {
                 <span className="font-mono text-[8px] tracking-[0.22em] uppercase">{t.bottomScrollIntro}</span>
                 <ChevronDown size={14} className="animate-bounce" />
               </div>
-            </>
-          )}
+            )}
 
-          <div className="flex items-center gap-2 sm:gap-3.5 w-full md:w-auto">
+            <div className={`flex items-center gap-3 transition-all duration-500 ${activeScene === 'pricing' ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+              <button 
+                onClick={() => { playGlassTap(); setIsSpecOpen(true); }}
+                className="px-6 py-3 border border-white/10 hover:border-white/25 bg-black/50 backdrop-blur-md text-white/70 hover:text-white cursor-pointer outline-none focus:outline-none font-mono text-[9px] tracking-widest uppercase transition-all duration-500"
+              >
+                {t.btnAudioRider}
+              </button>
+              <button 
+                onClick={() => { playGlassTap(); setIsBookOpen(true); }}
+                className="px-6 py-3 bg-white text-black hover:bg-[#ff7849] hover:text-white border border-transparent cursor-pointer outline-none focus:outline-none font-mono text-[9px] tracking-widest uppercase transition-all duration-500 flex items-center gap-1.5"
+              >
+                {t.btnBookSet}
+                <ArrowRight size={11} />
+              </button>
+            </div>
+          </div>
+
+          <MobileSceneNav
+            sections={getLocalizedSections()}
+            activeKey={activeScene}
+            onSelect={scrollToSection}
+          />
+
+          <div className={`grid grid-cols-2 gap-2 md:hidden transition-all duration-500 ${activeScene === 'pricing' ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
             <button 
               onClick={() => { playGlassTap(); setIsSpecOpen(true); }}
-              className="text-center justify-center flex-1 md:flex-initial luxury-btn border-white/10 hover:border-white/20 bg-black/45 text-white/70 cursor-pointer outline-none focus:outline-none py-2.5 sm:py-3 border-none font-mono text-[8px] sm:text-[9px] tracking-wider uppercase"
+              className="py-2.5 border border-white/10 bg-black/60 backdrop-blur-md text-white/70 cursor-pointer outline-none focus:outline-none font-mono text-[8px] tracking-widest uppercase transition-all duration-300 text-center"
             >
               {t.btnAudioRider}
             </button>
             <button 
               onClick={() => { playGlassTap(); setIsBookOpen(true); }}
-              className="text-center justify-center flex-1 md:flex-initial luxury-btn bg-white text-black hover:bg-[#ff7849] hover:text-white border-transparent py-2.5 sm:py-3 flex items-center justify-center gap-1.5 font-medium cursor-pointer outline-none focus:outline-none font-mono text-[8px] sm:text-[9px] tracking-widest uppercase"
+              className="py-2.5 bg-white text-black border border-transparent cursor-pointer outline-none focus:outline-none font-mono text-[8px] tracking-widest uppercase transition-all duration-300 flex items-center justify-center gap-1"
             >
               {t.btnBookSet}
-              <ArrowRight size={11} />
+              <ArrowRight size={10} />
             </button>
           </div>
         </div>
@@ -818,41 +815,40 @@ export default function App() {
             initial={{ opacity: 0, x: -15 }}
             animate={{ opacity: activeScene === 'intro' ? 1 : 0, x: activeScene === 'intro' ? 0 : -15 }}
             transition={{ duration: 0.6 }}
-            className={`scene-card space-y-6 ${activeScene === 'intro' ? 'block' : 'hidden'}`}
+            className={`scene-card space-y-4 sm:space-y-6 ${activeScene === 'intro' ? 'block' : 'hidden'}`}
           >
-            <div className="space-y-2">
-              <span className="font-mono text-[9px] tracking-[0.3em] text-[#ff7849] uppercase block font-semibold font-sans leading-none">{t.introSub}</span>
-              <h2 className="font-serif text-4xl md:text-5xl font-light text-white tracking-wide leading-none">
+            <div className="space-y-1.5">
+              <span className="font-mono text-[8px] sm:text-[9px] tracking-[0.25em] sm:tracking-[0.3em] text-[#ff7849] uppercase block font-semibold leading-none">{t.introSub}</span>
+              <h2 className="font-serif text-2xl sm:text-3xl md:text-5xl font-light text-white tracking-wide leading-none">
                 DJ BECKERMAN <br/>
-                <span className="font-normal italic font-serif text-[#ff7849]">{t.introTitle2}</span>
+                <span className="font-normal italic text-[#ff7849]">{t.introTitle2}</span>
               </h2>
             </div>
             
-            <p className="font-sans text-xs md:text-sm text-white/50 leading-relaxed font-light">
+            <p className="font-sans text-[11px] sm:text-xs md:text-sm text-white/50 leading-relaxed font-light">
               {t.introDesc}
             </p>
 
-            {/* Micro spec metrics */}
-            <div className="flex gap-6 pt-4 border-t border-white/5 justify-between">
+            <div className="grid grid-cols-3 gap-3 pt-3 border-t border-white/5">
               <div>
-                <p className="font-mono text-[8px] text-white/30 uppercase tracking-widest">{t.metricEvents}</p>
-                <p className="font-serif text-xs text-white mt-0.5 font-light">{t.metricEventsVal}</p>
+                <p className="font-mono text-[7px] sm:text-[8px] text-white/30 uppercase tracking-widest">{t.metricEvents}</p>
+                <p className="font-serif text-[11px] sm:text-xs text-white mt-0.5 font-light">{t.metricEventsVal}</p>
               </div>
               <div>
-                <p className="font-mono text-[8px] text-white/30 uppercase tracking-widest">{t.metricStyle}</p>
-                <p className="font-serif text-xs text-white mt-0.5 font-light">{t.metricStyleVal}</p>
+                <p className="font-mono text-[7px] sm:text-[8px] text-white/30 uppercase tracking-widest">{t.metricStyle}</p>
+                <p className="font-serif text-[11px] sm:text-xs text-white mt-0.5 font-light">{t.metricStyleVal}</p>
               </div>
               <div>
-                <p className="font-mono text-[8px] text-white/30 uppercase tracking-widest">{t.metricLoc}</p>
-                <p className="font-serif text-xs text-[#ff7849] mt-0.5 font-medium">{t.metricLocVal}</p>
+                <p className="font-mono text-[7px] sm:text-[8px] text-white/30 uppercase tracking-widest">{t.metricLoc}</p>
+                <p className="font-serif text-[11px] sm:text-xs text-[#ff7849] mt-0.5 font-medium">{t.metricLocVal}</p>
               </div>
             </div>
 
             <div 
-              className="pt-2 flex items-center gap-2 text-white hover:text-[#ff7849] transition-colors cursor-pointer group"
+              className="pt-1 flex items-center gap-2 text-white hover:text-[#ff7849] transition-colors cursor-pointer group"
               onClick={() => scrollToSection(1)}
             >
-              <span className="font-mono text-[10px] tracking-wider uppercase font-medium">{t.btnExploreAtmosphere}</span>
+              <span className="font-mono text-[9px] sm:text-[10px] tracking-wider uppercase font-medium">{t.btnExploreAtmosphere}</span>
               <ArrowRight size={11} className="group-hover:translate-x-1 transition-transform" />
             </div>
           </motion.div>
@@ -864,11 +860,11 @@ export default function App() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: activeScene === 'isolators' ? 1 : 0, x: activeScene === 'isolators' ? 0 : 20 }}
             transition={{ duration: 0.6 }}
-            className={`scene-card space-y-6 ${activeScene === 'isolators' ? 'block' : 'hidden'} text-left`}
+            className={`scene-card space-y-4 sm:space-y-6 ${activeScene === 'isolators' ? 'block' : 'hidden'} text-left`}
           >
             <div className="space-y-1.5">
               <span className="font-mono text-[8px] tracking-[0.25em] text-[#ff7849] uppercase block font-semibold">{localizedHotspots[0].name}</span>
-              <h2 className="font-serif text-3xl font-light text-white tracking-wide leading-tight">
+              <h2 className="font-serif text-xl sm:text-2xl md:text-3xl font-light text-white tracking-wide leading-tight">
                 {localizedHotspots[0].title}
               </h2>
             </div>
@@ -903,11 +899,11 @@ export default function App() {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: activeScene === 'vu-meters' ? 1 : 0, x: activeScene === 'vu-meters' ? 0 : -20 }}
             transition={{ duration: 0.6 }}
-            className={`scene-card space-y-6 ${activeScene === 'vu-meters' ? 'block' : 'hidden'}`}
+            className={`scene-card space-y-4 sm:space-y-6 ${activeScene === 'vu-meters' ? 'block' : 'hidden'}`}
           >
             <div className="space-y-1.5">
               <span className="font-mono text-[8px] tracking-[0.25em] text-[#ff7849] uppercase block font-semibold">{localizedHotspots[1].name}</span>
-              <h2 className="font-serif text-3xl font-light text-white tracking-wide leading-tight">
+              <h2 className="font-serif text-xl sm:text-2xl md:text-3xl font-light text-white tracking-wide leading-tight">
                 {localizedHotspots[1].title}
               </h2>
             </div>
@@ -942,11 +938,11 @@ export default function App() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: activeScene === 'vinyl' ? 1 : 0, x: activeScene === 'vinyl' ? 0 : 20 }}
             transition={{ duration: 0.6 }}
-            className={`scene-card space-y-5 ${activeScene === 'vinyl' ? 'block' : 'hidden'}`}
+            className={`scene-card space-y-3.5 sm:space-y-5 ${activeScene === 'vinyl' ? 'block' : 'hidden'}`}
           >
             <div className="space-y-1.5">
               <span className="font-mono text-[8px] tracking-[0.25em] text-[#ff7849] uppercase block font-semibold">{localizedHotspots[2].name}</span>
-              <h2 className="font-serif text-3xl font-light text-white tracking-wide leading-tight">
+              <h2 className="font-serif text-xl sm:text-2xl md:text-3xl font-light text-white tracking-wide leading-tight">
                 {localizedHotspots[2].title}
               </h2>
             </div>
@@ -1029,11 +1025,11 @@ export default function App() {
             initial={{ opacity: 0, x: -25 }}
             animate={{ opacity: activeScene === 'internals' ? 1 : 0, x: activeScene === 'internals' ? 0 : -25 }}
             transition={{ duration: 0.6 }}
-            className={`scene-card space-y-6 ${activeScene === 'internals' ? 'block' : 'hidden'}`}
+            className={`scene-card space-y-4 sm:space-y-6 ${activeScene === 'internals' ? 'block' : 'hidden'}`}
           >
             <div className="space-y-1.5">
               <span className="font-mono text-[8px] tracking-[0.25em] text-[#ff7849] uppercase block font-semibold font-sans">05 / MAJOR CLUB RESIDENCIES & BRANDS</span>
-              <h2 className="font-serif text-3xl font-light text-white tracking-wide leading-tight">
+              <h2 className="font-serif text-xl sm:text-2xl md:text-3xl font-light text-white tracking-wide leading-tight">
                 {t.sceneResidenciesTitle}
               </h2>
             </div>
@@ -1069,16 +1065,16 @@ export default function App() {
             initial={{ opacity: 0, x: 25 }}
             animate={{ opacity: activeScene === 'cables' ? 1 : 0, x: activeScene === 'cables' ? 0 : 25 }}
             transition={{ duration: 0.6 }}
-            className={`scene-card space-y-6 ${activeScene === 'cables' ? 'block' : 'hidden'} text-left`}
+            className={`scene-card space-y-4 sm:space-y-6 ${activeScene === 'cables' ? 'block' : 'hidden'} text-left`}
           >
             <div className="space-y-1.5">
               <span className="font-mono text-[8px] tracking-[0.25em] text-[#ff7849] uppercase block font-semibold font-sans">06 / PREMIUM SOUND RIDER SPECIFICATION</span>
-              <h2 className="font-serif text-3xl font-light text-white tracking-wide leading-tight">
+              <h2 className="font-serif text-xl sm:text-2xl md:text-3xl font-light text-white tracking-wide leading-tight">
                 {t.sceneTechnicalRiderTitle}
               </h2>
             </div>
             
-            <p className="font-sans text-xs text-white/50 leading-relaxed font-light font-sans">
+            <p className="font-sans text-xs text-white/50 leading-relaxed font-light">
               {t.sceneTechnicalRiderDesc}
             </p>
 
