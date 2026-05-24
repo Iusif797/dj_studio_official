@@ -11,6 +11,8 @@ export interface TranslationSet {
   navResidencies: string;
   navRider: string;
   navPricing: string;
+  navTestimonials: string;
+  navFaq: string;
   bottomCoordinates: string;
   bottomScrollIntro: string;
   btnAudioRider: string;
@@ -230,6 +232,8 @@ export const translations: Record<'en' | 'cs' | 'ru', TranslationSet> = {
     navResidencies: "RESIDENCIES",
     navRider: "TECH RIDER",
     navPricing: "RATES & PACKAGES",
+    navTestimonials: "TESTIMONIALS",
+    navFaq: "FAQ",
     bottomCoordinates: "PRAGUE NIGHTLIFE // PREMIUM DJ SERVICES",
     bottomScrollIntro: "SCROLL TO EXPLORE SERVICES",
     btnAudioRider: "AUDIO RIDER",
@@ -441,6 +445,8 @@ export const translations: Record<'en' | 'cs' | 'ru', TranslationSet> = {
     navResidencies: "REZIDENCE",
     navRider: "TECHNICKÝ RIDER",
     navPricing: "CENÍK & BALÍČKY",
+    navTestimonials: "REFERENCE",
+    navFaq: "FAQ",
     bottomCoordinates: "PRAŽSKÝ NOČNÍ ŽIVOT // PRÉMIOVÍ DJ SLUŽBY",
     bottomScrollIntro: "PROCHÁZEJTE PRO PROHLÉDNUTÍ SLUŽEB",
     btnAudioRider: "ZVUKOVÝ RIDER",
@@ -652,6 +658,8 @@ export const translations: Record<'en' | 'cs' | 'ru', TranslationSet> = {
     navResidencies: "РЕЗИДЕНЦИИ",
     navRider: "ТЕХНИЧЕСКИЙ РАЙДЕР",
     navPricing: "ТАРИФЫ И ЦЕНЫ",
+    navTestimonials: "ОТЗЫВЫ",
+    navFaq: "ВОПРОСЫ",
     bottomCoordinates: "ПРАЖСКАЯ НОЧНАЯ ЖИЗНЬ // ПРЕМИАЛЬНЫЕ DJ УСЛУГИ",
     bottomScrollIntro: "ПРОКРУТИТЕ ДЛЯ ПРОСМОТРА УСЛУГ",
     btnAudioRider: "АУДИО-РАЙДЕР",

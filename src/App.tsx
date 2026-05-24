@@ -31,12 +31,14 @@ import ReservationModal from './components/ReservationModal';
 import PricingPanel from './components/PricingPanel';
 import MobileSceneNav from './components/MobileSceneNav';
 import NoiseOverlay from './components/NoiseOverlay';
+import Testimonials from './components/Testimonials';
+import FAQ from './components/FAQ';
 
 import { DJMixerState } from './types';
 import { translations } from './translations';
 import { imageMixer, imageSkyline, imageTubes, imageCables } from './assets/images';
 
-const SCENE_KEYS = ['intro', 'isolators', 'vu-meters', 'vinyl', 'internals', 'cables', 'pricing'] as const;
+const SCENE_KEYS = ['intro', 'isolators', 'vu-meters', 'vinyl', 'internals', 'cables', 'pricing', 'testimonials', 'faq'] as const;
 type SceneKey = (typeof SCENE_KEYS)[number];
 
 // Spatial Hotspot targets on the Custom Analogue DJ Mixer
@@ -109,7 +111,11 @@ const SCENE_POSITIONS = [
   // Scene 6: Moving past parts, exiting through rear connection plate
   { scale: 5.5, x: -15, y: -20, rotate: 18, rotateX: -20, rotateY: 40 },
   // Scene 7: Settle on side, leaving performance control faders open on the right
-  { scale: 1.15, x: -22, y: 1, rotate: 2, rotateX: 5, rotateY: -2 }
+  { scale: 1.15, x: -22, y: 1, rotate: 2, rotateX: 5, rotateY: -2 },
+  // Scene 8: Testimonials — mixer already faded out (offscreen)
+  { scale: 1.0, x: 0, y: 0, rotate: 0, rotateX: 0, rotateY: 0 },
+  // Scene 9: FAQ — mixer already faded out (offscreen)
+  { scale: 1.0, x: 0, y: 0, rotate: 0, rotateX: 0, rotateY: 0 }
 ];
 
 const lerp = (start: number, end: number, amt: number) => (1 - amt) * start + amt * end;
@@ -132,7 +138,9 @@ export default function App() {
     { label: t.navLive, num: '04', key: 'vinyl' },
     { label: t.navResidencies, num: '05', key: 'internals' },
     { label: t.navRider, num: '06', key: 'cables' },
-    { label: t.navPricing, num: '07', key: 'pricing' }
+    { label: t.navPricing, num: '07', key: 'pricing' },
+    { label: t.navTestimonials, num: '08', key: 'testimonials' },
+    { label: t.navFaq, num: '09', key: 'faq' }
   ];
 
   const localizedHotspots = [
@@ -494,7 +502,7 @@ export default function App() {
   };
 
   return (
-    <div id="landing-root" className={`relative h-[700vh] bg-[#050505] text-[#eaeaea] overflow-x-hidden transition-opacity duration-[1200ms] ease-out ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
+    <div id="landing-root" className={`relative h-[900vh] bg-[#050505] text-[#eaeaea] overflow-x-hidden transition-opacity duration-[1200ms] ease-out ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
       <div
         className="fixed top-0 left-0 h-[2px] bg-gradient-to-r from-[#ff7849] to-[#ff7849]/60 z-[60] transition-[width] duration-150 ease-out"
         style={{ width: `${scrollProgress * 100}%` }}
@@ -747,7 +755,7 @@ export default function App() {
             </div>
           </div>
 
-          <div className={`hidden md:flex items-center justify-end gap-3 w-full mt-4 transition-all duration-500 ${activeScene === 'pricing' ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+          <div className={`hidden md:flex items-center justify-end gap-3 w-full mt-4 transition-all duration-500 ${activeScene === 'pricing' || activeScene === 'testimonials' || activeScene === 'faq' ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
             <AudioPlayer />
             <button
               onClick={() => { playGlassTap(); setIsBookOpen(true); }}
@@ -767,12 +775,12 @@ export default function App() {
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
             </div>
 
-            {scrollFraction < 6 && (
+            {scrollFraction < 8 && (
               <div 
                 className="flex flex-col items-center gap-1 opacity-60 hover:opacity-100 transition-opacity cursor-pointer text-white/40 hover:text-white"
                 onClick={() => {
                   const currentIdx = Math.round(scrollFraction);
-                  scrollToSection(Math.min(6, currentIdx + 1));
+                  scrollToSection(Math.min(8, currentIdx + 1));
                 }}
               >
                 <span className="font-mono text-[8px] tracking-[0.22em] uppercase">{t.bottomScrollIntro}</span>
@@ -780,7 +788,7 @@ export default function App() {
               </div>
             )}
 
-            <div className={`flex items-center gap-3 transition-all duration-500 ${activeScene === 'pricing' ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+            <div className={`flex items-center gap-3 transition-all duration-500 ${activeScene === 'pricing' || activeScene === 'testimonials' || activeScene === 'faq' ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
               <button 
                 onClick={() => { playGlassTap(); setIsSpecOpen(true); }}
                 className="px-6 py-3 border border-white/10 hover:border-white/25 bg-black/50 backdrop-blur-md text-white/70 hover:text-white cursor-pointer outline-none focus:outline-none font-mono text-[9px] tracking-widest uppercase transition-all duration-500"
@@ -803,7 +811,7 @@ export default function App() {
             onSelect={scrollToSection}
           />
 
-          <div className={`grid grid-cols-2 gap-2 md:hidden transition-all duration-500 ${activeScene === 'pricing' ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+          <div className={`grid grid-cols-2 gap-2 md:hidden transition-all duration-500 ${activeScene === 'pricing' || activeScene === 'testimonials' || activeScene === 'faq' ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
             <button 
               onClick={() => { playGlassTap(); setIsSpecOpen(true); }}
               className="py-2.5 border border-white/10 bg-black/60 backdrop-blur-md text-white/70 cursor-pointer outline-none focus:outline-none font-mono text-[8px] tracking-widest uppercase transition-all duration-300 text-center"
@@ -1127,6 +1135,16 @@ export default function App() {
               onSpec={() => { playGlassTap(); setIsSpecOpen(true); }}
             />
           </motion.div>
+        </section>
+
+        {/* SCENE 8: Testimonials */}
+        <section className="scene-section scene-section--start">
+          <Testimonials lang={lang} isActive={activeScene === 'testimonials'} />
+        </section>
+
+        {/* SCENE 9: FAQ */}
+        <section className="scene-section scene-section--start">
+          <FAQ lang={lang} isActive={activeScene === 'faq'} />
         </section>
 
       </div>
