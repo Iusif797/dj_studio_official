@@ -10,7 +10,7 @@ export interface TranslationSet {
   navLive: string;
   navResidencies: string;
   navRider: string;
-  navConsole: string;
+  navPricing: string;
   bottomCoordinates: string;
   bottomScrollIntro: string;
   btnAudioRider: string;
@@ -85,23 +85,39 @@ export interface TranslationSet {
   riderMetric1Val: string;
   riderMetric2: string;
   riderMetric2Val: string;
-  btnNextToConsole: string;
+  btnNextToPricing: string;
 
-  // Scene 7: Console
-  consoleSub: string;
-  consoleTitle: string;
-  consoleDesc: string;
-  consoleActive: string;
-  consoleSec1: string;
-  consoleSec1Val: string;
-  consoleSec2: string;
-  consoleSec3: string;
-  consoleEqBass: string;
-  consoleEqMid: string;
-  consoleEqTreble: string;
-  consolePitchTitle: string;
-  consolePitchDeep: string;
-  consolePitchHard: string;
+  hotspotShort1: string;
+  hotspotShort2: string;
+  hotspotShort3: string;
+  hotspotShort4: string;
+
+  pricingSub: string;
+  pricingTitle: string;
+  pricingDesc: string;
+  pricingNote: string;
+  pricingFeaturedBadge: string;
+  pricingTier1Tag: string;
+  pricingTier1Name: string;
+  pricingTier1Price: string;
+  pricingTier1Duration: string;
+  pricingTier1Feature1: string;
+  pricingTier1Feature2: string;
+  pricingTier1Feature3: string;
+  pricingTier2Tag: string;
+  pricingTier2Name: string;
+  pricingTier2Price: string;
+  pricingTier2Duration: string;
+  pricingTier2Feature1: string;
+  pricingTier2Feature2: string;
+  pricingTier2Feature3: string;
+  pricingTier3Tag: string;
+  pricingTier3Name: string;
+  pricingTier3Price: string;
+  pricingTier3Duration: string;
+  pricingTier3Feature1: string;
+  pricingTier3Feature2: string;
+  pricingTier3Feature3: string;
 
   // Technical Rider Spec Modal
   specTag: string;
@@ -185,10 +201,7 @@ export interface TranslationSet {
   bookFooterFormatText: string;
   btnBookSetBeckerman: string;
   btnDetailsRider: string;
-  btnNextToLiveConsole: string;
   btnNextToTechnicalRider: string;
-  cueBtn1: string;
-  cueBtn2: string;
   labelClubResidencies: string;
   labelCorporatePartnerships: string;
   labelPitchFader: string;
@@ -196,19 +209,10 @@ export interface TranslationSet {
   labelRiderMainConsole: string;
   pitchDeepGroove: string;
   pitchHardTechno: string;
-  sceneLiveConsoleTitle: string;
   sceneResidenciesDesc: string;
   sceneResidenciesTitle: string;
   sceneTechnicalRiderDesc: string;
   sceneTechnicalRiderTitle: string;
-  simDesc: string;
-  simSec1Title: string;
-  simSec2Title: string;
-  simSec3Title: string;
-  simSec4TitleLP: string;
-  simSec4TitleVol: string;
-  simSec5Title: string;
-  simSynthesizerLabel: string;
   valClubResidencies: string;
   valCorporatePartnerships: string;
 }
@@ -225,9 +229,9 @@ export const translations: Record<'en' | 'cs' | 'ru', TranslationSet> = {
     navLive: "LIVE PLATTER",
     navResidencies: "RESIDENCIES",
     navRider: "TECH RIDER",
-    navConsole: "LIVE CONSOLE",
-    bottomCoordinates: "PRAGUE NIGHTLIFE // HIGH-DEFINITION PIONEER CDJ-3000 CORE",
-    bottomScrollIntro: "SCROLL TO EXPLORE THE DJ DESK",
+    navPricing: "RATES & PACKAGES",
+    bottomCoordinates: "PRAGUE NIGHTLIFE // PREMIUM DJ SERVICES",
+    bottomScrollIntro: "SCROLL TO EXPLORE SERVICES",
     btnAudioRider: "AUDIO RIDER",
     btnBookSet: "BOOK SET",
     btnBookSystem: "BOOK SYSTEM",
@@ -296,22 +300,39 @@ export const translations: Record<'en' | 'cs' | 'ru', TranslationSet> = {
     riderMetric1Val: "3x CDJ-3000 & DJM-V10",
     riderMetric2: "INTERRES CONNECTOR",
     riderMetric2Val: "Neutrik XLR Gold Line",
-    btnNextToConsole: "TEST THE LIVE CONSOLE",
+    btnNextToPricing: "View Rates & Packages",
 
-    consoleSub: "PIONEER HIGH-PERFORMANCE DIGITAL STUDIO WORKSTATION",
-    consoleTitle: "Live Control Station",
-    consoleDesc: "Ultra-responsive interactive DJ layout. Fire up the live sequenced Tech-House/Melodic synth stems and sweep frequencies via the virtual digital isolators—hear direct phase filtering and watch mechanical VU peak meters bounce in real time!",
-    consoleActive: "CLASS-A ACTIVE",
-    consoleSec1: "1. Sound Activator & Tempo",
-    consoleSec1Val: "SEQUENCER SYNTH",
-    consoleSec2: "LIVE VU DECIBELS",
-    consoleSec3: "3. Melodic Master Isolator (Channel EQ)",
-    consoleEqBass: "BASS",
-    consoleEqMid: "MID",
-    consoleEqTreble: "TREBLE",
-    consolePitchTitle: "Tempo Shift / Pitch Fader",
-    consolePitchDeep: "-8% (DEEP GROOVE)",
-    consolePitchHard: "+8% (HARD TECHNO)",
+    hotspotShort1: "01 / ATMOSPHERE",
+    hotspotShort2: "02 / MIXSETS",
+    hotspotShort3: "03 / LIVE SET",
+    hotspotShort4: "04 / RESIDENCIES",
+
+    pricingSub: "TRANSPARENT DJ SERVICE RATES",
+    pricingTitle: "Packages & Pricing",
+    pricingDesc: "Fair rates for a starting DJ in Prague — bar sets, birthdays, and small events. All prices in CZK. Travel within Prague and a pre-event call included.",
+    pricingNote: "Prices are indicative for a beginner DJ. Final quote depends on date, venue, and duration. Payment in CZK only.",
+    pricingFeaturedBadge: "Popular",
+    pricingTier1Tag: "Bar & Club",
+    pricingTier1Name: "Bar Set",
+    pricingTier1Price: "4 500 Kč",
+    pricingTier1Duration: "2 hours",
+    pricingTier1Feature1: "House, Tech House & open-format playlist",
+    pricingTier1Feature2: "Brief consultation before the event",
+    pricingTier1Feature3: "Works with standard club Pioneer setup",
+    pricingTier2Tag: "Private Event",
+    pricingTier2Name: "Birthday / Party",
+    pricingTier2Price: "7 500 Kč",
+    pricingTier2Duration: "Up to 4 hours",
+    pricingTier2Feature1: "Custom playlist and guest requests",
+    pricingTier2Feature2: "Flexible timing for private venues",
+    pricingTier2Feature3: "Sound check on arrival",
+    pricingTier3Tag: "Corporate",
+    pricingTier3Name: "Small Corporate",
+    pricingTier3Price: "12 000 Kč",
+    pricingTier3Duration: "By agreement",
+    pricingTier3Feature1: "Appropriate music for brand events",
+    pricingTier3Feature2: "Professional communication with organizer",
+    pricingTier3Feature3: "Extended set option available",
 
     specTag: "BECKERMAN — DIGITAL TECH RIDER & SPEC",
     specTitle: "EQUIPMENT SPECIFICATIONS",
@@ -393,10 +414,7 @@ export const translations: Record<'en' | 'cs' | 'ru', TranslationSet> = {
     bookFooterFormatText: "Club / Festival / VIP",
     btnBookSetBeckerman: "Book Performance",
     btnDetailsRider: "View Technical Specs",
-    btnNextToLiveConsole: "Proceed to Live Console",
     btnNextToTechnicalRider: "Proceed to Technical Rider",
-    cueBtn1: "KICK DRUM DROP",
-    cueBtn2: "OFFBEAT PERCUSSION",
     labelClubResidencies: "Club Residencies",
     labelCorporatePartnerships: "Corporate Partners",
     labelPitchFader: "Pitch / Tempo Fader",
@@ -404,19 +422,10 @@ export const translations: Record<'en' | 'cs' | 'ru', TranslationSet> = {
     labelRiderMainConsole: "Main Console Setup",
     pitchDeepGroove: "-8% (Deep Groove)",
     pitchHardTechno: "+8% (Hard Techno)",
-    sceneLiveConsoleTitle: "Interactive Performance Hub",
     sceneResidenciesDesc: "From legendary clubs in Prague like Duplex, Roxy, Epic and Retro Music Hall, to high-end bespoke events for global corporate giants like Heineken, Porsche, Forbes and Netlify. Audiophile curation with uncompromising dynamic energy.",
     sceneResidenciesTitle: "Geography & Artistic Trust",
     sceneTechnicalRiderDesc: "Impeccable signal precision. Performances are executed strictly on clean industry-standard flagship equipment wired with premium balanced Neutrik Pro XLR gold lines to eliminate signal jitter and interference.",
     sceneTechnicalRiderTitle: "Technical Rider Specs",
-    simDesc: "Play around with the live sequencer. Toggle synthesized stems, isolate frequencies with rotary knobs, and watch analog VU needles react in real-time.",
-    simSec1Title: "Sound Activator & Tempo",
-    simSec2Title: "Live VU Decibels",
-    simSec3Title: "Melodic Master Isolator (Channel EQ)",
-    simSec4TitleLP: "LP Cutoff Filter Sweep",
-    simSec4TitleVol: "Master Volume Output",
-    simSec5Title: "Interactive Hot-Cue Pads",
-    simSynthesizerLabel: "Sequencer Synth",
     valClubResidencies: "Duplex, Roxy, Epic, Radost FX",
     valCorporatePartnerships: "Porsche, Heineken, Forbes, Netlify"
   },
@@ -431,9 +440,9 @@ export const translations: Record<'en' | 'cs' | 'ru', TranslationSet> = {
     navLive: "ŽIVÝ TALÍŘ",
     navResidencies: "REZIDENCE",
     navRider: "TECHNICKÝ RIDER",
-    navConsole: "ŽIVÁ KONZOLE",
-    bottomCoordinates: "PRAŽSKÝ NOČNÍ ŽIVOT // ŠPIČKOVÝ SYSTÉM PIONEER CDJ-3000",
-    bottomScrollIntro: "PROCHÁZEJTE PRO PROZKOUMÁNÍ DIOD",
+    navPricing: "CENÍK & BALÍČKY",
+    bottomCoordinates: "PRAŽSKÝ NOČNÍ ŽIVOT // PRÉMIOVÍ DJ SLUŽBY",
+    bottomScrollIntro: "PROCHÁZEJTE PRO PROHLÉDNUTÍ SLUŽEB",
     btnAudioRider: "ZVUKOVÝ RIDER",
     btnBookSet: "REZERVACE SETU",
     btnBookSystem: "REZERVOVAT SHOW",
@@ -502,22 +511,39 @@ export const translations: Record<'en' | 'cs' | 'ru', TranslationSet> = {
     riderMetric1Val: "3x CDJ-3000 & DJM-V10",
     riderMetric2: "ZAPOJENÍ & PORTY",
     riderMetric2Val: "Neutrik XLR Gold Line",
-    btnNextToConsole: "OTESTOVAT ŽIVOU KONZOLI",
+    btnNextToPricing: "Zobrazit Ceník a Balíčky",
 
-    consoleSub: "ŠPIČKOVÁ DIGITÁLNÍ STUDIOVÁ STANICE PIONEER",
-    consoleTitle: "Živá ovládací konzole",
-    consoleDesc: "Vysoce reaktivní interaktivní DJ rozhraní. Spusťte živé smyčky pro Tech-House/Melodický syntezátor a ovládejte frekvence přes virtuální EQ izolátory – uslyšíte okamžitý řez pásma a uvidíte poskakování ručiček VU metrů v reálném čase!",
-    consoleActive: "TŘÍDA-A AKTIVNÍ",
-    consoleSec1: "1. Aktivace zvuku & Rychlost",
-    consoleSec1Val: "SPOUŠTĚČ SYNTU",
-    consoleSec2: "ŽIVÉ VU DECI-BELERY",
-    consoleSec3: "3. Melodický Master Izolátor (EQ Kanálu)",
-    consoleEqBass: "BASS",
-    consoleEqMid: "MID",
-    consoleEqTreble: "TREBLE",
-    consolePitchTitle: "Změna tempa / Pitch Fader",
-    consolePitchDeep: "-8% (Hluboký Groove)",
-    consolePitchHard: "+8% (Tvrdé Techno)",
+    hotspotShort1: "01 / ATMOSFÉRA",
+    hotspotShort2: "02 / SETY",
+    hotspotShort3: "03 / LIVE SET",
+    hotspotShort4: "04 / REZIDENCE",
+
+    pricingSub: "TRANSPARENTNÍ CENY DJ SLUŽEB",
+    pricingTitle: "Balíčky a Ceník",
+    pricingDesc: "Férové ceny pro začínajícího DJ v Praze — bary, narozeniny a menší akce. Všechny ceny v Kč. Doprava po Praze a krátká konzultace v ceně.",
+    pricingNote: "Uvedené ceny jsou orientační pro začínajícího DJ. Finální nabídka závisí na datu, místě a délce. Platba pouze v Kč.",
+    pricingFeaturedBadge: "Nejoblíbenější",
+    pricingTier1Tag: "Bar & Klub",
+    pricingTier1Name: "Barový set",
+    pricingTier1Price: "4 500 Kč",
+    pricingTier1Duration: "2 hodiny",
+    pricingTier1Feature1: "House, Tech House a open-format playlist",
+    pricingTier1Feature2: "Krátká konzultace před akcí",
+    pricingTier1Feature3: "Kompatibilní se standardním klubovým setupem",
+    pricingTier2Tag: "Soukromá akce",
+    pricingTier2Name: "Narozeniny / Party",
+    pricingTier2Price: "7 500 Kč",
+    pricingTier2Duration: "Až 4 hodiny",
+    pricingTier2Feature1: "Vlastní playlist a přání hostů",
+    pricingTier2Feature2: "Flexibilní načasování pro soukromé prostory",
+    pricingTier2Feature3: "Soundcheck po příjezdu",
+    pricingTier3Tag: "Firemní",
+    pricingTier3Name: "Menší firemní akce",
+    pricingTier3Price: "12 000 Kč",
+    pricingTier3Duration: "Dle dohody",
+    pricingTier3Feature1: "Vhodná hudba pro brand a firemní eventy",
+    pricingTier3Feature2: "Profesionální komunikace s organizátorem",
+    pricingTier3Feature3: "Možnost prodloužení setu",
 
     specTag: "BECKERMAN — DIGITÁLNÍ TECH RIDER & SPEC",
     specTitle: "SPECIFIKACE VYBAVENÍ",
@@ -599,10 +625,7 @@ export const translations: Record<'en' | 'cs' | 'ru', TranslationSet> = {
     bookFooterFormatText: "Klub / Festival / Speciální akce",
     btnBookSetBeckerman: "Rezervovat Vystoupení",
     btnDetailsRider: "Zobrazit Specifikaci",
-    btnNextToLiveConsole: "Pokračovat na Živou Konzoli",
     btnNextToTechnicalRider: "Pokračovat na Zvukový Rider",
-    cueBtn1: "KICK DRUM SYNTH",
-    cueBtn2: "SYNTH PERKUSE",
     labelClubResidencies: "Klubové Rezidence",
     labelCorporatePartnerships: "Firemní Partneři",
     labelPitchFader: "Rychlost Pitch Fader",
@@ -610,19 +633,10 @@ export const translations: Record<'en' | 'cs' | 'ru', TranslationSet> = {
     labelRiderMainConsole: "Hlavní Režijní Setap",
     pitchDeepGroove: "-8% (Hluboký Groove)",
     pitchHardTechno: "+8% (Tvrdé Techno)",
-    sceneLiveConsoleTitle: "Interaktivní Ovládací Konzole",
     sceneResidenciesDesc: "Od dlouhodobých rezidencí v legendárních pražských klubech jako Duplex, Roxy, Epic a Retro Music Hall po exkluzivní akce pro globální korporace včetně Heineken, Forbes, Netlify a Porsche. Zvuková selekce s nekompromisní energií.",
     sceneResidenciesTitle: "Geografie a Umělecká Důvěra",
     sceneTechnicalRiderDesc: "Bezchybná přesnost signálu. Vystoupení probíhají výhradně na čistém standardním vlajkovém vybavení s použitím symetrických kabelů Neutrik Pro XLR zlaté série pro eliminaci rušení.",
     sceneTechnicalRiderTitle: "Specifikace Technického Rideru",
-    simDesc: "Vyzkoušejte si živý sekvencer. Spouštějte syntetické smyčky, izolujte frekvence otočnými knoflíky a sledujte, jak analogové VU ručičky reagují v reálném čase.",
-    simSec1Title: "Aktivace Zvuku & Rychlost",
-    simSec2Title: "Živé VU Decibely",
-    simSec3Title: "Melodický Master Izolátor (EQ Kanálu)",
-    simSec4TitleLP: "LP Frekvenční Filtr Sweep",
-    simSec4TitleVol: "Hlavní Hlasitost Master",
-    simSec5Title: "Interaktivní Hot-Cue Pady",
-    simSynthesizerLabel: "Spouštěč Syntu",
     valClubResidencies: "Duplex, Roxy, Epic, Radost FX",
     valCorporatePartnerships: "Porsche, Heineken, Forbes, Netlify"
   },
@@ -637,9 +651,9 @@ export const translations: Record<'en' | 'cs' | 'ru', TranslationSet> = {
     navLive: "ЖИВАЯ ДЕКА",
     navResidencies: "РЕЗИДЕНЦИИ",
     navRider: "ТЕХНИЧЕСКИЙ РАЙДЕР",
-    navConsole: "ЖИВАЯ КОНСОЛЬ",
-    bottomCoordinates: "ПРАЖСКАЯ НОЧНАЯ ЖИЗНЬ // ВЕДУЩИЙ СЕ-ТАП PIONEER CDJ-3000",
-    bottomScrollIntro: "ПРОКРУТИТЕ ДЛЯ ИЗУЧЕНИЯ ДИДЖЕЙСКОГО ПУЛЬТА",
+    navPricing: "ТАРИФЫ И ЦЕНЫ",
+    bottomCoordinates: "ПРАЖСКАЯ НОЧНАЯ ЖИЗНЬ // ПРЕМИАЛЬНЫЕ DJ УСЛУГИ",
+    bottomScrollIntro: "ПРОКРУТИТЕ ДЛЯ ПРОСМОТРА УСЛУГ",
     btnAudioRider: "АУДИО-РАЙДЕР",
     btnBookSet: "ЗАБРОНИРОВАТЬ СЕТ",
     btnBookSystem: "ЗАБРОНИРОВАТЬ ШОУ",
@@ -708,22 +722,39 @@ export const translations: Record<'en' | 'cs' | 'ru', TranslationSet> = {
     riderMetric1Val: "3x CDJ-3000 & DJM-V10",
     riderMetric2: "КОММУТАЦИЯ & ПОРТЫ",
     riderMetric2Val: "Neutrik XLR Gold Line",
-    btnNextToConsole: "ПРОТЕСТИРОВАТЬ ЖИВУЮ КОНСОЛЬ",
+    btnNextToPricing: "Перейти к Тарифам и Ценам",
 
-    consoleSub: "ВЫСОКОПРОИЗВОДИТЕЛЬНАЯ ЦИФРОВАЯ СТАНЦИЯ PIONEER",
-    consoleTitle: "Консоль Управления",
-    consoleDesc: "Сверхбыстрая интерактивная диджейская станция. Запустите живой хаус/техно синтезатор и управляйте частотами через цифровые EQ-изоляторы — вы услышите мгновенный срез звука и увидите неоновое мерцание пиковых VU-метров!",
-    consoleActive: "КЛАСС-А АКТИВЕН",
-    consoleSec1: "1. Активатор Звука & Темп",
-    consoleSec1Val: "СИНТЕЗАТОР ШОУ",
-    consoleSec2: "ЖИВЫЕ КЛУБНЫЕ СТРЕЛКИ VU",
-    consoleSec3: "3. Мелодический Мастер-Изолятор (Канал EQ)",
-    consoleEqBass: "BASS",
-    consoleEqMid: "MID",
-    consoleEqTreble: "TREBLE",
-    consolePitchTitle: "Шаг темпа / Pitch Fader",
-    consolePitchDeep: "-8% (ГЛУБОКИЙ ГРУВ)",
-    consolePitchHard: "+8% (ХАРД ТЕХНО)",
+    hotspotShort1: "01 / АТМОСФЕРА",
+    hotspotShort2: "02 / СЕТЫ",
+    hotspotShort3: "03 / LIVE SET",
+    hotspotShort4: "04 / РЕЗИДЕНЦИИ",
+
+    pricingSub: "ПРОЗРАЧНЫЕ ТАРИФЫ DJ УСЛУГ",
+    pricingTitle: "Пакеты и Цены",
+    pricingDesc: "Адекватные цены для начинающего DJ в Праге — бары, дни рождения и небольшие ивенты. Все цены только в Kč. Трансфер по Праге и короткий созвон включены.",
+    pricingNote: "Цены ориентировочные для начинающего DJ. Итог зависит от даты, площадки и длительности. Оплата только в чешских кронах.",
+    pricingFeaturedBadge: "Популярный",
+    pricingTier1Tag: "Бар и клуб",
+    pricingTier1Name: "Барный сет",
+    pricingTier1Price: "4 500 Kč",
+    pricingTier1Duration: "2 часа",
+    pricingTier1Feature1: "House, Tech House и open-format плейлист",
+    pricingTier1Feature2: "Короткая консультация перед событием",
+    pricingTier1Feature3: "Работа со стандартным клубным сетапом",
+    pricingTier2Tag: "Частное событие",
+    pricingTier2Name: "День рождения / Party",
+    pricingTier2Price: "7 500 Kč",
+    pricingTier2Duration: "До 4 часов",
+    pricingTier2Feature1: "Персональный плейлист и пожелания гостей",
+    pricingTier2Feature2: "Гибкий тайминг для частных площадок",
+    pricingTier2Feature3: "Саундчек по приезду",
+    pricingTier3Tag: "Корпоратив",
+    pricingTier3Name: "Небольшой корпоратив",
+    pricingTier3Price: "12 000 Kč",
+    pricingTier3Duration: "По договорённости",
+    pricingTier3Feature1: "Подходящая музыка для brand-событий",
+    pricingTier3Feature2: "Профессиональная связь с организатором",
+    pricingTier3Feature3: "Возможность продления сета",
 
     specTag: "BECKERMAN — ЦИФРОВОЙ ТЕХНИЧЕСКИЙ РАЙДЕР И СПЕЦИФИКАЦИЯ",
     specTitle: "ХАРАКТЕРИСТИКИ ОБОРУДОВАНИЯ",
@@ -805,10 +836,7 @@ export const translations: Record<'en' | 'cs' | 'ru', TranslationSet> = {
     bookFooterFormatText: "Клуб / Фестиваль / Корпоратив",
     btnBookSetBeckerman: "Забронировать Выступление",
     btnDetailsRider: "Посмотреть Спецификацию",
-    btnNextToLiveConsole: "Перейти к Живой Консоли",
     btnNextToTechnicalRider: "Перейти к Техническому Райдеру",
-    cueBtn1: "КЛУБНАЯ БОЧКА",
-    cueBtn2: "ПЕРКУССИЯ В ДОЛЮ",
     labelClubResidencies: "Клубные Резиденции",
     labelCorporatePartnerships: "Корпоративные Партнеры",
     labelPitchFader: "Pitch / Темп Фейдер",
@@ -816,19 +844,10 @@ export const translations: Record<'en' | 'cs' | 'ru', TranslationSet> = {
     labelRiderMainConsole: "Основная Консоль",
     pitchDeepGroove: "-8% (Глубокий Грув)",
     pitchHardTechno: "+8% (Хард Техно)",
-    sceneLiveConsoleTitle: "Интерактивная Консоль",
     sceneResidenciesDesc: "От резидентства в легендарных клубах Праги — Duplex, Roxy, Epic и Retro Music Hall — до масштабных мероприятий для глобальных гигантов, таких как Heineken, Netlify, Forbes и Porsche. Музыкальное сопровождение премиум-класса с полной энергоотдачей.",
     sceneResidenciesTitle: "География и Доверие",
     sceneTechnicalRiderDesc: "Безукоризненная точность сигнала. Выступления проводятся исключительно на чистом флагманском оборудовании с использованием балансных кабелей Neutrik Pro XLR золотого сечения для устранения искажений.",
     sceneTechnicalRiderTitle: "Спецификация Технического Райдера",
-    simDesc: "Попробуйте себя в роли диджея. Запускайте синтезированные дорожки, изолируйте частоты с помощью поворотных ручек и следите за поведением стрелок VU-метров в реальном времени.",
-    simSec1Title: "Активатор Звука & Темп",
-    simSec2Title: "Живые Клубные Стрелки VU",
-    simSec3Title: "Мелодический Мастер-Изолятор (Канал EQ)",
-    simSec4TitleLP: "LP Фильтр Частотного Среза",
-    simSec4TitleVol: "Мастер-Громкость Выхода",
-    simSec5Title: "Интерактивные Hot-Cue Пэды",
-    simSynthesizerLabel: "Синтезатор Шоу",
     valClubResidencies: "Duplex, Roxy, Epic, Radost FX",
     valCorporatePartnerships: "Porsche, Heineken, Forbes, Netlify"
   }

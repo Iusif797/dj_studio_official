@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 
 interface CinemagraphProps {
-  scene: 'intro' | 'touchpad' | 'rotary' | 'simulator';
+  scene: 'intro' | 'touchpad' | 'rotary' | 'pricing';
   scrollProgress: number;
 }
 
@@ -169,11 +169,10 @@ export default function CinemagraphEffects({ scene, scrollProgress }: Cinemagrap
       });
 
       // 2. Draw CONCENTRIC expand waves emited from remote center (Scene 1 & 4)
-      if (scene === 'intro' || scene === 'simulator') {
+      if (scene === 'intro' || scene === 'pricing') {
         waves.forEach((wave) => {
-          // Sync center coordinates to where the remote is located
-          wave.x = width * (scene === 'simulator' ? 0.35 : 0.5);
-          wave.y = height * (scene === 'simulator' ? 0.5 : 0.55);
+          wave.x = width * (scene === 'pricing' ? 0.35 : 0.5);
+          wave.y = height * (scene === 'pricing' ? 0.5 : 0.55);
           wave.update();
           wave.draw(ctx);
         });

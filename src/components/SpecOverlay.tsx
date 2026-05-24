@@ -48,7 +48,7 @@ export default function SpecOverlay({ isOpen, onClose, lang = 'en' }: SpecOverla
   return (
     <div 
       id="specifications-overlay" 
-      className="fixed inset-0 z-40 bg-black/85 backdrop-blur-xl flex justify-end transition-opacity duration-500 overflow-y-auto"
+      className="fixed inset-0 z-40 bg-black/85 backdrop-blur-xl flex justify-end transition-opacity duration-500 overflow-y-auto overscroll-contain"
     >
       {/* Background close click */}
       <div className="absolute inset-0" onClick={() => { playGlassTap(); onClose(); }} />
@@ -58,7 +58,7 @@ export default function SpecOverlay({ isOpen, onClose, lang = 'en' }: SpecOverla
         animate={{ x: 0 }}
         exit={{ x: '100%' }}
         transition={{ type: 'spring', damping: 24, stiffness: 110 }}
-        className="relative w-full max-w-2xl bg-[#0a0a0a] border-l border-white/10 h-full min-h-screen p-8 md:p-14 flex flex-col justify-between z-10"
+        className="relative w-full max-w-none md:max-w-2xl bg-[#0a0a0a] border-0 md:border-l border-white/10 h-full min-h-[100dvh] p-5 sm:p-8 md:p-14 flex flex-col justify-between z-10"
       >
         <div>
           {/* Header */}

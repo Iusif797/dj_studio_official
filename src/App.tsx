@@ -10,7 +10,6 @@ import {
   SlidersHorizontal,
   Layers,
   Sparkles,
-  Zap,
   Hammer,
   RotateCw,
   Volume2,
@@ -24,22 +23,21 @@ import {
 import AudioPlayer, { 
   playRotaryClick, 
   playGlassTap, 
-  updateMasterVolume, 
-  updateEQ, 
   updateFilterSweep,
   startSequencer,
-  stopSequencer
 } from './components/AudioPlayer';
 import CinemagraphEffects from './components/CinemagraphEffects';
 import SpecOverlay from './components/SpecOverlay';
 import ReservationModal from './components/ReservationModal';
+import PricingPanel from './components/PricingPanel';
+import MobileSceneNav from './components/MobileSceneNav';
 import NoiseOverlay from './components/NoiseOverlay';
 
 import { DJMixerState } from './types';
 import { translations } from './translations';
 import { imageMixer, imageSkyline, imageTubes, imageCables } from './assets/images';
 
-const SCENE_KEYS = ['intro', 'isolators', 'vu-meters', 'vinyl', 'internals', 'cables', 'simulator'] as const;
+const SCENE_KEYS = ['intro', 'isolators', 'vu-meters', 'vinyl', 'internals', 'cables', 'pricing'] as const;
 type SceneKey = (typeof SCENE_KEYS)[number];
 
 // Spatial Hotspot targets on the Custom Analogue DJ Mixer
@@ -94,7 +92,7 @@ const SECTIONS = [
   { label: 'ЖИВОЙ ПЕРФОРМАНС', num: '04', key: 'vinyl' },
   { label: 'РЕЗИДЕНЦИИ', num: '05', key: 'internals' },
   { label: 'ТЕХНИЧЕСКИЙ РАЙДЕР', num: '06', key: 'cables' },
-  { label: 'ЖИВАЯ КОНСОЛЬ', num: '07', key: 'simulator' }
+  { label: 'ТАРИФЫ И ЦЕНЫ', num: '07', key: 'pricing' }
 ];
 
 // 3D Camera coordinates for the physical mixer object (7 chapters of the fly-through)
@@ -135,7 +133,7 @@ export default function App() {
     { label: t.navLive, num: '04', key: 'vinyl' },
     { label: t.navResidencies, num: '05', key: 'internals' },
     { label: t.navRider, num: '06', key: 'cables' },
-    { label: t.navConsole, num: '07', key: 'simulator' }
+    { label: t.navPricing, num: '07', key: 'pricing' }
   ];
 
   const localizedHotspots = [
@@ -454,69 +452,6 @@ export default function App() {
     };
   };
 
-  // Adjust Isolator Dial EQ knobs
-  const adjustIsolatorDb = (band: 'bass' | 'mid' | 'treble', valueDb: number) => {
-    playRotaryClick();
-    setMixerState(prev => {
-      const next = { ...prev };
-      if (band === 'bass') next.bassEQ = valueDb;
-      if (band === 'mid') next.midEQ = valueDb;
-      if (band === 'treble') next.trebleEQ = valueDb;
-
-      // Feed directly into Web Audio nodes
-      updateEQ(next.bassEQ, next.midEQ, next.trebleEQ);
-      return next;
-    });
-  };
-
-  // Adjust Master Volume Gain
-  const adjustMasterVol = (volPercent: number) => {
-    playRotaryClick();
-    setMixerState(prev => {
-      updateMasterVolume(volPercent);
-      return { ...prev, masterVolume: volPercent };
-    });
-  };
-
-  // Turn Cutoff Filter Sweep Dial
-  const adjustCutoffSweep = (hzValue: number) => {
-    playRotaryClick();
-    setMixerState(prev => {
-      updateFilterSweep(hzValue);
-      return { ...prev, filterFreq: hzValue };
-    });
-  };
-
-  // Toggle Live Synthesizer sequence state
-  const handleToggleSequencer = () => {
-    playGlassTap();
-    setMixerState(prev => {
-      const nextPlaying = !prev.synthPlaying;
-      if (nextPlaying) {
-        startSequencer(prev.bpm);
-      } else {
-        stopSequencer();
-      }
-      return { ...prev, synthPlaying: nextPlaying };
-    });
-  };
-
-  // Change BPM tempo rate
-  const adjustBPM = (newBpm: number) => {
-    playGlassTap();
-    setMixerState(prev => {
-      if (prev.synthPlaying) {
-        startSequencer(newBpm);
-      }
-      return { ...prev, bpm: newBpm };
-    });
-  };
-
-  // Custom hotcue trigger sample beats
-  const triggerHotCue = () => {
-    playGlassTap(); // synthesizes custom kick drop instant node
-  };
-
   const scrollToSection = (idx: number) => {
     playGlassTap();
     window.scrollTo({
@@ -542,7 +477,7 @@ export default function App() {
       <NoiseOverlay />
 
       {/* FIXED VIEWPORT BACKGROUND SCENERY CANVAS */}
-      <div id="stage-viewport" className="fixed inset-0 w-full h-full overflow-hidden select-none pointer-events-none z-0">
+      <div id="stage-viewport" className="stage-backdrop-mobile fixed inset-0 w-full h-full overflow-hidden select-none pointer-events-none z-0">
         
         {/* Immersive twilight skyline blurry backdrop */}
         <div 
@@ -557,9 +492,9 @@ export default function App() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_30%,rgba(0,0,0,0.92)_100%)] z-20 pointer-events-none" />
 
         {/* Live coordinate lines grid indicator rails */}
-        <div className="absolute inset-0 z-20 opacity-25 pointer-events-none flex justify-between px-10 items-center border-x border-white/5 mx-10">
-          <span className="font-mono text-[8px] text-white/10 [writing-mode:vertical-lr] tracking-[0.4em]">BECKERMAN // 50.0755° N, 14.4378° E</span>
-          <span className="font-mono text-[8px] text-white/10 [writing-mode:vertical-lr] tracking-[0.4em]">CLASS-A SIGNAL COIL 96KHZ</span>
+        <div className="absolute inset-0 z-20 opacity-25 pointer-events-none hidden md:flex justify-between px-10 items-center border-x border-white/5 mx-10">
+          <span className="font-mono text-[8px] text-white/10 [writing-mode:vertical-lr] tracking-[0.4em]">BECKERMAN // PRAGUE DJ SERVICES</span>
+          <span className="font-mono text-[8px] text-white/10 [writing-mode:vertical-lr] tracking-[0.4em]">CLUB · PRIVATE · CORPORATE</span>
         </div>
 
         {/* LAYER 2: CHASSIS GOING DEEP INSIDE CHOPPERS (TUBES CORE) */}
@@ -634,7 +569,7 @@ export default function App() {
 
             {/* Interactive Clickable Hotspots overlayed directly on the DJ Mixer image during intro, inviting fly-in */}
             {activeScene === 'intro' && (
-              <>
+              <div className="hidden md:block">
                 {/* Hotspot 1: ALPS ISOLATORS */}
                 <button
                   onClick={() => scrollToSection(1)}
@@ -645,7 +580,7 @@ export default function App() {
                     <span className="relative inline-flex rounded-full h-3 w-3 bg-[#ff7849]"></span>
                   </span>
                   <span className="opacity-0 group-hover/h1:opacity-100 transition-opacity bg-black/90 text-[8px] tracking-[0.2em] text-white font-mono px-2 py-1 border border-white/10 uppercase whitespace-nowrap">
-                    01 / ИЗОЛЯТОРЫ EQ
+                    {t.hotspotShort1}
                   </span>
                 </button>
 
@@ -659,7 +594,7 @@ export default function App() {
                     <span className="relative inline-flex rounded-full h-3 w-3 bg-[#ff7849]"></span>
                   </span>
                   <span className="opacity-0 group-hover/h2:opacity-100 transition-opacity bg-black/90 text-[8px] tracking-[0.2em] text-white font-mono px-2 py-1 border border-white/10 uppercase whitespace-nowrap">
-                    02 / VU СТРЕЛКИ
+                    {t.hotspotShort2}
                   </span>
                 </button>
 
@@ -673,7 +608,7 @@ export default function App() {
                     <span className="relative inline-flex rounded-full h-3 w-3 bg-[#ff7849]"></span>
                   </span>
                   <span className="opacity-0 group-hover/h3:opacity-100 transition-opacity bg-black/90 text-[8px] tracking-[0.2em] text-white font-mono px-2 py-1 border border-white/10 uppercase whitespace-nowrap">
-                    03 / ВИНИЛОВЫЙ ДЕК
+                    {t.hotspotShort3}
                   </span>
                 </button>
 
@@ -687,10 +622,10 @@ export default function App() {
                     <span className="relative inline-flex rounded-full h-3 w-3 bg-[#ff7849]"></span>
                   </span>
                   <span className="opacity-0 group-hover/h4:opacity-100 transition-opacity bg-black/90 text-[8px] tracking-[0.2em] text-white font-mono px-2 py-1 border border-white/10 uppercase whitespace-nowrap">
-                    04 / СИМУЛЯТОР СЕТА
+                    {t.hotspotShort4}
                   </span>
                 </button>
-              </>
+              </div>
             )}
           </div>
         </motion.div>
@@ -700,7 +635,7 @@ export default function App() {
           scene={
             activeScene === 'isolators' ? 'touchpad' 
             : activeScene === 'vu-meters' ? 'rotary' 
-            : activeScene === 'simulator' ? 'simulator' 
+            : activeScene === 'pricing' ? 'pricing' 
             : 'intro'
           } 
           scrollProgress={scrollFraction / 6} 
@@ -761,18 +696,46 @@ export default function App() {
       </div>
 
       {/* FIXED POSITION GRAPHIC HUD HEADS-UP OVERLAYS */}
-      <div id="hud-container" className="fixed inset-0 z-40 pointer-events-none flex flex-col justify-between p-6 md:p-10 select-none">
+      <MobileSceneNav
+        sections={getLocalizedSections()}
+        activeKey={activeScene}
+        onSelect={scrollToSection}
+      />
+
+      <div id="hud-container" className="hud-shell">
         
-        {/* BRAND HEADER BAR */}
-        <header id="top-branding-bar" className="w-full flex justify-between items-start pointer-events-auto">
-          {/* Logo Heading */}
-          <div className="flex flex-col cursor-pointer" onClick={() => scrollToSection(0)}>
-            <h1 className="font-serif text-[26px] md:text-[32px] font-light leading-none tracking-[0.18em] text-white">BECKERMAN</h1>
-            <span className="font-mono text-[8px] tracking-[0.34em] text-[#ff7849] uppercase mt-1 font-semibold">{t.brandSub}</span>
+        <header id="top-branding-bar" className="w-full flex flex-col gap-3 sm:gap-4 pointer-events-auto">
+          <div className="flex w-full items-start justify-between gap-3">
+            <div className="flex flex-col cursor-pointer min-w-0" onClick={() => scrollToSection(0)}>
+              <h1 className="font-serif text-[22px] sm:text-[26px] md:text-[32px] font-light leading-none tracking-[0.14em] sm:tracking-[0.18em] text-white">BECKERMAN</h1>
+              <span className="font-mono text-[7px] sm:text-[8px] tracking-[0.24em] sm:tracking-[0.34em] text-[#ff7849] uppercase mt-1 font-semibold line-clamp-2">{t.brandSub}</span>
+            </div>
+
+            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+              <div className="flex items-center gap-1 border border-white/10 bg-black/50 px-1.5 sm:px-2 py-1 sm:py-1.5 font-mono select-none">
+                {(['en', 'cs', 'ru'] as const).map((l) => (
+                  <button
+                    key={l}
+                    onClick={() => {
+                      playRotaryClick();
+                      setLang(l);
+                    }}
+                    className={`px-1 sm:px-1.5 py-px text-[8px] sm:text-[8.5px] uppercase tracking-wider transition-all duration-300 border-none bg-transparent cursor-pointer ${lang === l ? 'text-[#ff7849] font-bold border-b border-[#ff7849]' : 'text-white/45 hover:text-white'}`}
+                  >
+                    {l}
+                  </button>
+                ))}
+              </div>
+              <button
+                onClick={() => { playGlassTap(); setIsBookOpen(true); }}
+                className="px-3 sm:px-5 py-2 sm:py-2.5 bg-white text-black font-mono text-[8px] sm:text-[9px] tracking-[0.18em] sm:tracking-[0.25em] uppercase hover:bg-[#ff7849] hover:text-white transition-all duration-500 rounded-none shadow-xl outline-none focus:outline-none cursor-pointer md:hidden"
+              >
+                {t.btnBookSet}
+              </button>
+            </div>
           </div>
 
-          {/* Core HUD status widget */}
-          <div className="hidden lg:flex items-center gap-10 border border-white/10 bg-black/60 backdrop-blur-md px-6 py-3">
+          <div className="hidden lg:flex items-center justify-end gap-10 border border-white/10 bg-black/60 backdrop-blur-md px-6 py-3 w-fit ml-auto">
             <div className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-[#ff7849] animate-pulse" />
               <span className="font-mono text-[9px] tracking-widest uppercase text-white/50">{t.brandStatus}</span>
@@ -784,28 +747,11 @@ export default function App() {
             </div>
           </div>
 
-          {/* Premium sound controls actions */}
-          <div className="flex items-center gap-4">
-            {/* Minimalist luxury deck selector language dials */}
-            <div className="flex items-center gap-1 border border-white/10 bg-black/50 px-2 py-1.5 font-mono select-none">
-              {(['en', 'cs', 'ru'] as const).map((l) => (
-                <button
-                  key={l}
-                  onClick={() => {
-                    playRotaryClick();
-                    setLang(l);
-                  }}
-                  className={`px-1.5 py-px text-[8.5px] uppercase tracking-wider transition-all duration-300 border-none bg-transparent cursor-pointer ${lang === l ? 'text-[#ff7849] font-bold border-b border-[#ff7849]' : 'text-white/45 hover:text-white'}`}
-                >
-                  {l}
-                </button>
-              ))}
-            </div>
-
+          <div className="hidden md:flex items-center justify-end gap-3 w-full">
             <AudioPlayer />
             <button
               onClick={() => { playGlassTap(); setIsBookOpen(true); }}
-              className="px-5 py-2.5 bg-white text-black font-mono text-[9px] tracking-[0.25em] uppercase hover:bg-[#ff7849] hover:text-white transition-all duration-500 rounded-none shadow-xl hidden sm:block outline-none focus:outline-none cursor-pointer"
+              className="px-5 py-2.5 bg-white text-black font-mono text-[9px] tracking-[0.25em] uppercase hover:bg-[#ff7849] hover:text-white transition-all duration-500 rounded-none shadow-xl outline-none focus:outline-none cursor-pointer"
             >
               {t.btnBookSystem}
             </button>
@@ -813,39 +759,48 @@ export default function App() {
         </header>
 
         {/* BOTTOM INFORMATIONAL BAR */}
-        <div id="bottom-hud-bar" className="w-full flex flex-col md:flex-row md:justify-between items-center md:items-end gap-6 pointer-events-auto">
-          {/* Active coordinates and location tags */}
-          <div className="flex items-center gap-4 bg-black/55 border border-white/5 backdrop-blur-md px-4 py-2.5 font-mono text-[8px] text-white/40 tracking-widest uppercase">
-            <Compass size={11} className="text-[#ff7849] animate-[spin_10s_linear_infinite]" />
-            <span>{t.bottomCoordinates}</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse ml-0.5" />
+        <div id="bottom-hud-bar" className="w-full flex flex-col gap-3 sm:gap-4 md:flex-row md:justify-between items-stretch md:items-end pointer-events-auto">
+          <div className="hidden sm:flex items-center gap-3 bg-black/55 border border-white/5 backdrop-blur-md px-3 sm:px-4 py-2 sm:py-2.5 font-mono text-[7px] sm:text-[8px] text-white/40 tracking-widest uppercase">
+            <Compass size={11} className="text-[#ff7849] animate-[spin_10s_linear_infinite] shrink-0" />
+            <span className="line-clamp-2">{t.bottomCoordinates}</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
           </div>
 
-          {/* Floating Downscroll indicator */}
           {scrollFraction < 6 && (
-            <div 
-              className="hidden lg:flex flex-col items-center gap-1 hover:opacity-100 opacity-60 transition-opacity cursor-pointer text-white/40 hover:text-white"
-              onClick={() => {
-                const currentIdx = Math.round(scrollFraction);
-                scrollToSection(Math.min(6, currentIdx + 1));
-              }}
-            >
-              <span className="font-mono text-[8px] tracking-[0.22em] uppercase">{t.bottomScrollIntro}</span>
-              <ChevronDown size={14} className="animate-bounce" />
-            </div>
+            <>
+              <div 
+                className="flex lg:hidden flex-col items-center gap-1 hover:opacity-100 opacity-70 transition-opacity cursor-pointer text-white/40 hover:text-white self-center"
+                onClick={() => {
+                  const currentIdx = Math.round(scrollFraction);
+                  scrollToSection(Math.min(6, currentIdx + 1));
+                }}
+              >
+                <span className="font-mono text-[7px] sm:text-[8px] tracking-[0.18em] uppercase text-center">{t.bottomScrollIntro}</span>
+                <ChevronDown size={14} className="animate-bounce" />
+              </div>
+              <div 
+                className="hidden lg:flex flex-col items-center gap-1 hover:opacity-100 opacity-60 transition-opacity cursor-pointer text-white/40 hover:text-white"
+                onClick={() => {
+                  const currentIdx = Math.round(scrollFraction);
+                  scrollToSection(Math.min(6, currentIdx + 1));
+                }}
+              >
+                <span className="font-mono text-[8px] tracking-[0.22em] uppercase">{t.bottomScrollIntro}</span>
+                <ChevronDown size={14} className="animate-bounce" />
+              </div>
+            </>
           )}
 
-          {/* Bottom Action buttons */}
-          <div className="flex items-center gap-3.5 w-full md:w-auto self-stretch md:self-auto justify-between md:justify-start">
+          <div className="flex items-center gap-2 sm:gap-3.5 w-full md:w-auto">
             <button 
               onClick={() => { playGlassTap(); setIsSpecOpen(true); }}
-              className="text-center justify-center flex-1 md:flex-initial luxury-btn border-white/10 hover:border-white/20 bg-black/45 text-white/70 cursor-pointer outline-none focus:outline-none py-3 border-none font-mono text-[9px] tracking-wider uppercase"
+              className="text-center justify-center flex-1 md:flex-initial luxury-btn border-white/10 hover:border-white/20 bg-black/45 text-white/70 cursor-pointer outline-none focus:outline-none py-2.5 sm:py-3 border-none font-mono text-[8px] sm:text-[9px] tracking-wider uppercase"
             >
               {t.btnAudioRider}
             </button>
             <button 
               onClick={() => { playGlassTap(); setIsBookOpen(true); }}
-              className="text-center justify-center flex-1 md:flex-initial luxury-btn bg-white text-black hover:bg-[#ff7849] hover:text-white border-transparent py-3 flex items-center justify-center gap-1.5 font-medium cursor-pointer outline-none focus:outline-none font-mono text-[9px] tracking-widest uppercase"
+              className="text-center justify-center flex-1 md:flex-initial luxury-btn bg-white text-black hover:bg-[#ff7849] hover:text-white border-transparent py-2.5 sm:py-3 flex items-center justify-center gap-1.5 font-medium cursor-pointer outline-none focus:outline-none font-mono text-[8px] sm:text-[9px] tracking-widest uppercase"
             >
               {t.btnBookSet}
               <ArrowRight size={11} />
@@ -855,15 +810,15 @@ export default function App() {
       </div>
 
       {/* DYNAMIC SCROLL CHAPTERS HOVERING OVER SCENE BACKGROUND */}
-      <div id="scroll-chapters" className="relative z-20 pointer-events-none select-none max-w-7xl mx-auto px-4 md:px-10 lg:px-14">
+      <div id="scroll-chapters" className="scroll-chapters-shell">
         
         {/* SCENE 1: Introduction - ScrollFraction 0 to 0.5 */}
-        <section className="h-screen flex flex-col justify-center items-start">
+        <section className="scene-section scene-section--start">
           <motion.div
             initial={{ opacity: 0, x: -15 }}
             animate={{ opacity: activeScene === 'intro' ? 1 : 0, x: activeScene === 'intro' ? 0 : -15 }}
             transition={{ duration: 0.6 }}
-            className={`space-y-6 pointer-events-auto max-w-md bg-black/75 backdrop-blur-md p-5 border border-white/5 md:p-8 max-h-[85vh] overflow-y-auto ${activeScene === 'intro' ? 'block' : 'hidden'}`}
+            className={`scene-card space-y-6 ${activeScene === 'intro' ? 'block' : 'hidden'}`}
           >
             <div className="space-y-2">
               <span className="font-mono text-[9px] tracking-[0.3em] text-[#ff7849] uppercase block font-semibold font-sans leading-none">{t.introSub}</span>
@@ -904,12 +859,12 @@ export default function App() {
         </section>
 
         {/* SCENE 2: Isolator EQ Focus - ScrollFraction 0.5 to 1.5 */}
-        <section className="h-screen flex flex-col justify-center items-end">
+        <section className="scene-section scene-section--end">
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: activeScene === 'isolators' ? 1 : 0, x: activeScene === 'isolators' ? 0 : 20 }}
             transition={{ duration: 0.6 }}
-            className={`space-y-6 max-w-md pointer-events-auto ${activeScene === 'isolators' ? 'block' : 'hidden'} text-left bg-black/75 backdrop-blur-md p-5 border border-white/5 md:p-8 max-h-[85vh] overflow-y-auto shadow-2xl`}
+            className={`scene-card space-y-6 ${activeScene === 'isolators' ? 'block' : 'hidden'} text-left`}
           >
             <div className="space-y-1.5">
               <span className="font-mono text-[8px] tracking-[0.25em] text-[#ff7849] uppercase block font-semibold">{localizedHotspots[0].name}</span>
@@ -943,12 +898,12 @@ export default function App() {
         </section>
 
         {/* SCENE 3: Amber VU Meters Focus - ScrollFraction 1.5 to 2.5 */}
-        <section className="h-screen flex flex-col justify-center items-start">
+        <section className="scene-section scene-section--start">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: activeScene === 'vu-meters' ? 1 : 0, x: activeScene === 'vu-meters' ? 0 : -20 }}
             transition={{ duration: 0.6 }}
-            className={`space-y-6 max-w-md pointer-events-auto ${activeScene === 'vu-meters' ? 'block' : 'hidden'} bg-black/75 backdrop-blur-md p-5 border border-white/5 md:p-8 max-h-[85vh] overflow-y-auto shadow-2xl`}
+            className={`scene-card space-y-6 ${activeScene === 'vu-meters' ? 'block' : 'hidden'}`}
           >
             <div className="space-y-1.5">
               <span className="font-mono text-[8px] tracking-[0.25em] text-[#ff7849] uppercase block font-semibold">{localizedHotspots[1].name}</span>
@@ -982,12 +937,12 @@ export default function App() {
         </section>
 
         {/* SCENE 4: Pioneer-Style Jog Wheel Platter - ScrollFraction 2.5 to 3.5 */}
-        <section className="h-screen flex flex-col justify-center items-end">
+        <section className="scene-section scene-section--end">
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: activeScene === 'vinyl' ? 1 : 0, x: activeScene === 'vinyl' ? 0 : 20 }}
             transition={{ duration: 0.6 }}
-            className={`w-full max-w-md pointer-events-auto space-y-5 ${activeScene === 'vinyl' ? 'block' : 'hidden'} bg-black/75 backdrop-blur-md p-5 border border-white/5 md:p-8 max-h-[85vh] overflow-y-auto shadow-2xl`}
+            className={`scene-card space-y-5 ${activeScene === 'vinyl' ? 'block' : 'hidden'}`}
           >
             <div className="space-y-1.5">
               <span className="font-mono text-[8px] tracking-[0.25em] text-[#ff7849] uppercase block font-semibold">{localizedHotspots[2].name}</span>
@@ -1069,12 +1024,12 @@ export default function App() {
         </section>
 
         {/* SCENE 5: Internals (Into the Heart) - ScrollFraction 3.5 to 4.5 */}
-        <section className="h-screen flex flex-col justify-center items-start">
+        <section className="scene-section scene-section--start">
           <motion.div
             initial={{ opacity: 0, x: -25 }}
             animate={{ opacity: activeScene === 'internals' ? 1 : 0, x: activeScene === 'internals' ? 0 : -25 }}
             transition={{ duration: 0.6 }}
-            className={`space-y-6 max-w-md pointer-events-auto ${activeScene === 'internals' ? 'block' : 'hidden'} bg-black/75 backdrop-blur-md p-5 border border-white/5 md:p-8 max-h-[85vh] overflow-y-auto shadow-2xl`}
+            className={`scene-card space-y-6 ${activeScene === 'internals' ? 'block' : 'hidden'}`}
           >
             <div className="space-y-1.5">
               <span className="font-mono text-[8px] tracking-[0.25em] text-[#ff7849] uppercase block font-semibold font-sans">05 / MAJOR CLUB RESIDENCIES & BRANDS</span>
@@ -1109,12 +1064,12 @@ export default function App() {
         </section>
 
         {/* SCENE 6: Cables (Rear Connectors Matrix) - ScrollFraction 4.5 to 5.5 */}
-        <section className="h-screen flex flex-col justify-center items-end">
+        <section className="scene-section scene-section--end">
           <motion.div
             initial={{ opacity: 0, x: 25 }}
             animate={{ opacity: activeScene === 'cables' ? 1 : 0, x: activeScene === 'cables' ? 0 : 25 }}
             transition={{ duration: 0.6 }}
-            className={`space-y-6 max-w-md pointer-events-auto ${activeScene === 'cables' ? 'block' : 'hidden'} text-left bg-black/75 backdrop-blur-md p-5 border border-white/5 md:p-8 max-h-[85vh] overflow-y-auto shadow-2xl`}
+            className={`scene-card space-y-6 ${activeScene === 'cables' ? 'block' : 'hidden'} text-left`}
           >
             <div className="space-y-1.5">
               <span className="font-mono text-[8px] tracking-[0.25em] text-[#ff7849] uppercase block font-semibold font-sans">06 / PREMIUM SOUND RIDER SPECIFICATION</span>
@@ -1142,282 +1097,24 @@ export default function App() {
               className="pt-2 flex items-center gap-2 text-white hover:text-[#ff7849] transition-colors cursor-pointer group"
               onClick={() => scrollToSection(6)}
             >
-              <span className="font-mono text-[10px] tracking-wider uppercase font-medium">{t.btnNextToLiveConsole}</span>
+              <span className="font-mono text-[10px] tracking-wider uppercase font-medium">{t.btnNextToPricing}</span>
               <ArrowRight size={11} className="group-hover:translate-x-1 transition-transform" />
             </div>
           </motion.div>
         </section>
 
-        {/* SCENE 7: Full Interactive Live DJ Console and Web Audio Synthesizer - ScrollFraction 5.5+ */}
-        <section className="h-screen flex flex-col justify-center items-end">
+        <section className="scene-section scene-section--end">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: activeScene === 'simulator' ? 1 : 0, y: activeScene === 'simulator' ? 0 : 20 }}
+            animate={{ opacity: activeScene === 'pricing' ? 1 : 0, y: activeScene === 'pricing' ? 0 : 20 }}
             transition={{ duration: 0.6 }}
-            className={`w-full max-w-lg pointer-events-auto space-y-5 ${activeScene === 'simulator' ? 'block' : 'hidden'}`}
+            className={`pointer-events-auto w-full flex justify-center md:justify-end ${activeScene === 'pricing' ? 'block' : 'hidden'}`}
           >
-            {/* Console Description header */}
-            <div className="space-y-1">
-              <span className="font-mono text-[8px] tracking-[0.3em] text-[#ff7849] uppercase block font-semibold font-sans">PIONEER HIGH-PERFORMANCE DIGITAL STUDIO WORKSTATION</span>
-              <h2 className="font-serif text-3xl md:text-5xl font-light text-white tracking-wide leading-none">{t.sceneLiveConsoleTitle}</h2>
-              <p className="font-sans text-xs text-white/50 leading-relaxed font-light max-w-sm">
-                {t.simDesc}
-              </p>
-            </div>
-
-            {/* THE MONOLITHIC SIMULATOR CARD */}
-            <div className="bg-[#090909] border border-white/10 p-5 md:p-6 space-y-5 shadow-2xl backdrop-blur-md relative overflow-hidden">
-              
-              {/* Decorative status indicators inside form */}
-              <div className="absolute top-3 right-4 flex items-center gap-1.5 opacity-60">
-                <span className={`w-1.5 h-1.5 rounded-full ${mixerState.synthPlaying ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
-                <span className="font-mono text-[7px] text-white/40 tracking-widest uppercase">CLASS-A ACTIVE</span>
-              </div>
-
-              {/* 1. Synthersizer Stems ON/OFF and Master Level */}
-              <div className="space-y-2.5">
-                <span className="font-mono text-[8px] text-white/40 tracking-[0.14em] uppercase block">1. {t.simSec1Title}</span>
-                <div className="flex flex-wrap items-center justify-between gap-4 bg-black/40 border border-white/5 p-3">
-                  <button 
-                    onClick={handleToggleSequencer}
-                    className={`flex items-center gap-2.5 px-4 py-2 font-mono text-[10px] tracking-widest uppercase transition-all duration-300 rounded-none cursor-pointer outline-none border-none ${mixerState.synthPlaying ? 'bg-[#ff7849] text-white shadow-[0_0_12px_rgba(255,120,73,0.3)]' : 'bg-white/10 text-white/65 hover:bg-white/15'}`}
-                  >
-                    <Zap size={11} className={mixerState.synthPlaying ? 'animate-bounce' : ''} />
-                    <span>{t.simSynthesizerLabel}: {mixerState.synthPlaying ? 'ON' : 'OFF'}</span>
-                  </button>
-
-                  <div className="flex items-center gap-1 bg-black/50 p-1 border border-white/5 font-mono text-[8px]">
-                    {[120, 124, 128].map((bpmRate) => (
-                      <button
-                        key={bpmRate}
-                        onClick={() => adjustBPM(bpmRate)}
-                        className={`px-2 py-1 uppercase rounded-none transition-colors border-none bg-transparent cursor-pointer ${mixerState.bpm === bpmRate ? 'text-[#ff7849] font-bold' : 'text-white/30 hover:text-white/60'}`}
-                      >
-                        {bpmRate} BPM
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* 2. Visual Moving Analog VU needle screens */}
-              <div className="space-y-1.5 border-t border-white/5 pt-3">
-                <span className="font-mono text-[8px] text-white/40 tracking-[0.14em] uppercase block">2. {t.simSec2Title}</span>
-                <div className="grid grid-cols-2 gap-3 pb-1">
-                  
-                  {/* Left meter */}
-                  <div className="bg-black/80 border border-white/5 p-2 flex flex-col items-center justify-center relative">
-                    <span className="font-mono text-[6px] text-white/20 absolute top-1 left-2">CH-L (MASTER OUT)</span>
-                    <div className="w-full h-8 flex items-end justify-center relative border-b border-white/5">
-                      {/* Bouncing mechanical needle indicator */}
-                      <motion.div 
-                        style={{ rotate: `${((vuLeft / 100) * 80) - 40}deg` }}
-                        className="w-0.5 h-10 bg-[#ff7849] origin-bottom shadow-[0_0_4px_rgba(255,120,73,0.8)]"
-                      />
-                      <span className="w-1.5 h-1.5 bg-zinc-700 rounded-full z-10 -mb-0.5" />
-                    </div>
-                    {/* Tick markings overlay */}
-                    <div className="w-full flex justify-between font-mono text-[7px] text-white/20 px-4 mt-0.5">
-                      <span>-20db</span> <span>0db</span> <span>+6db</span>
-                    </div>
-                  </div>
-
-                  {/* Right meter */}
-                  <div className="bg-black/80 border border-white/5 p-2 flex flex-col items-center justify-center relative">
-                    <span className="font-mono text-[6px] text-white/20 absolute top-1 left-2">CH-R (MASTER OUT)</span>
-                    <div className="w-full h-8 flex items-end justify-center relative border-b border-white/5">
-                      {/* Bouncing mechanical needle indicator */}
-                      <motion.div 
-                        style={{ rotate: `${((vuRight / 100) * 80) - 40}deg` }}
-                        className="w-0.5 h-10 bg-[#ff7849] origin-bottom shadow-[0_0_4px_rgba(255,120,73,0.8)]"
-                      />
-                      <span className="w-1.5 h-1.5 bg-zinc-700 rounded-full z-10 -mb-0.5" />
-                    </div>
-                    {/* Tick markings overlay */}
-                    <div className="w-full flex justify-between font-mono text-[7px] text-white/20 px-4 mt-0.5">
-                      <span>-20db</span> <span>0db</span> <span>+6db</span>
-                    </div>
-                  </div>
-
-                </div>
-              </div>
-
-              {/* 3. Three Rotary Isolator EQ Potentiometers */}
-              <div className="border-t border-white/5 pt-4 space-y-2">
-                <span className="font-mono text-[8px] text-white/40 tracking-[0.14em] uppercase block">3. {t.simSec3Title}</span>
-                
-                <div className="grid grid-cols-3 gap-4 text-center">
-                  
-                  {/* BASS DIAL */}
-                  <div className="flex flex-col items-center gap-1">
-                    <div className="relative group w-14 h-14 rounded-full border border-white/10 bg-black/60 flex items-center justify-center">
-                      <motion.div 
-                        style={{ rotate: `${((mixerState.bassEQ + 12) / 18) * 270 - 135}deg` }}
-                        className="absolute inset-0 flex flex-col items-center justify-start pointer-events-none"
-                      >
-                        <div className="w-1 h-3 bg-[#ff7849] mt-0.5" />
-                      </motion.div>
-                      <div className="w-7 h-7 rounded-full bg-[#111] border border-white/5 flex items-center justify-center text-white/30 text-[8px] font-mono">BASS</div>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <button 
-                        onClick={() => adjustIsolatorDb('bass', Math.max(-12, mixerState.bassEQ - 2))}
-                        className="w-4 h-4 border border-white/5 flex items-center justify-center text-[10px] text-white/30 hover:text-white cursor-pointer bg-transparent"
-                      >
-                        -
-                      </button>
-                      <span className="font-mono text-[8px] text-white/80 w-8 text-center">{mixerState.bassEQ > 0 ? `+${mixerState.bassEQ}` : mixerState.bassEQ}</span>
-                      <button 
-                        onClick={() => adjustIsolatorDb('bass', Math.min(6, mixerState.bassEQ + 2))}
-                        className="w-4 h-4 border border-white/5 flex items-center justify-center text-[10px] text-white/30 hover:text-white cursor-pointer bg-transparent"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* MID DIAL */}
-                  <div className="flex flex-col items-center gap-1">
-                    <div className="relative group w-14 h-14 rounded-full border border-white/10 bg-black/60 flex items-center justify-center">
-                      <motion.div 
-                        style={{ rotate: `${((mixerState.midEQ + 12) / 18) * 270 - 135}deg` }}
-                        className="absolute inset-0 flex flex-col items-center justify-start pointer-events-none"
-                      >
-                        <div className="w-1 h-3 bg-[#ff7849] mt-0.5" />
-                      </motion.div>
-                      <div className="w-7 h-7 rounded-full bg-[#111] border border-white/5 flex items-center justify-center text-white/30 text-[8px] font-mono">MID</div>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <button 
-                        onClick={() => adjustIsolatorDb('mid', Math.max(-12, mixerState.midEQ - 2))}
-                        className="w-4 h-4 border border-white/5 flex items-center justify-center text-[10px] text-white/30 hover:text-white cursor-pointer bg-transparent"
-                      >
-                        -
-                      </button>
-                      <span className="font-mono text-[8px] text-white/80 w-8 text-center">{mixerState.midEQ > 0 ? `+${mixerState.midEQ}` : mixerState.midEQ}</span>
-                      <button 
-                        onClick={() => adjustIsolatorDb('mid', Math.min(6, mixerState.midEQ + 2))}
-                        className="w-4 h-4 border border-white/5 flex items-center justify-center text-[10px] text-white/30 hover:text-white cursor-pointer bg-transparent"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* TREBLE DIAL */}
-                  <div className="flex flex-col items-center gap-1">
-                    <div className="relative group w-14 h-14 rounded-full border border-white/10 bg-black/60 flex items-center justify-center">
-                      <motion.div 
-                        style={{ rotate: `${((mixerState.trebleEQ + 12) / 18) * 270 - 135}deg` }}
-                        className="absolute inset-0 flex flex-col items-center justify-start pointer-events-none"
-                      >
-                        <div className="w-1 h-3 bg-[#ff7849] mt-0.5" />
-                      </motion.div>
-                      <div className="w-7 h-7 rounded-full bg-[#111] border border-white/5 flex items-center justify-center text-white/30 text-[8px] font-mono">TREB</div>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <button 
-                        onClick={() => adjustIsolatorDb('treble', Math.max(-12, mixerState.trebleEQ - 2))}
-                        className="w-4 h-4 border border-white/5 flex items-center justify-center text-[10px] text-white/30 hover:text-white cursor-pointer bg-transparent"
-                      >
-                        -
-                      </button>
-                      <span className="font-mono text-[8px] text-white/80 w-8 text-center">{mixerState.trebleEQ > 0 ? `+${mixerState.trebleEQ}` : mixerState.trebleEQ}</span>
-                      <button 
-                        onClick={() => adjustIsolatorDb('treble', Math.min(6, mixerState.trebleEQ + 2))}
-                        className="w-4 h-4 border border-white/5 flex items-center justify-center text-[10px] text-white/30 hover:text-white cursor-pointer bg-transparent"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-
-                </div>
-              </div>
-
-              {/* 4. Filter Sweep Cutoff and Master Volume */}
-              <div className="border-t border-white/5 pt-4 grid grid-cols-1 sm:grid-cols-2 gap-4 font-mono text-[8.5px]">
-                
-                {/* LP Sweep fader */}
-                <div className="space-y-1.5">
-                  <div className="flex justify-between text-white/40 uppercase tracking-wider">
-                    <span>{t.simSec4TitleLP}</span>
-                    <span className="text-white">{mixerState.filterFreq} Hz</span>
-                  </div>
-                  <input 
-                    type="range"
-                    min="200"
-                    max="15000"
-                    step="100"
-                    value={mixerState.filterFreq}
-                    onChange={(e) => adjustCutoffSweep(parseInt(e.target.value))}
-                    className="w-full h-1 bg-white/10 accent-[#ff7849] appearance-none cursor-pointer outline-none"
-                  />
-                  <div className="flex justify-between text-[6.5px] text-white/20">
-                    <span>200Hz (BASS ONLY)</span>
-                    <span>15kHz (OPEN)</span>
-                  </div>
-                </div>
-
-                {/* Master volume slider */}
-                <div className="space-y-1.5">
-                  <div className="flex justify-between text-white/40 uppercase tracking-wider">
-                    <span>{t.simSec4TitleVol}</span>
-                    <span className="text-white">{mixerState.masterVolume}%</span>
-                  </div>
-                  <input 
-                    type="range"
-                    min="0"
-                    max="100"
-                    step="5"
-                    value={mixerState.masterVolume}
-                    onChange={(e) => adjustMasterVol(parseInt(e.target.value))}
-                    className="w-full h-1 bg-white/10 accent-[#ff7849] appearance-none cursor-pointer outline-none"
-                  />
-                  <div className="flex justify-between text-[6.5px] text-white/20">
-                    <span>0% (SILENCE)</span>
-                    <span>100% (FULL OUT)</span>
-                  </div>
-                </div>
-
-              </div>
-
-              {/* 5. Trigger Cue Pad Samples */}
-              <div className="border-t border-white/5 pt-3 space-y-1.5">
-                <span className="font-mono text-[8px] text-white/40 tracking-[0.14em] uppercase block">5. {t.simSec5Title}</span>
-                <div className="grid grid-cols-2 gap-2">
-                  <button 
-                    onClick={triggerHotCue}
-                    className="py-2 border border-white/5 bg-black/60 hover:bg-[#ff7849]/10 hover:border-[#ff7849]/30 text-[8px] font-mono text-white/70 uppercase tracking-wider cursor-pointer outline-none"
-                  >
-                    🚀 {t.cueBtn1}
-                  </button>
-                  <button 
-                    onClick={triggerHotCue}
-                    className="py-2 border border-white/5 bg-black/60 hover:bg-[#ff7849]/10 hover:border-[#ff7849]/30 text-[8px] font-mono text-white/70 uppercase tracking-wider cursor-pointer outline-none"
-                  >
-                    🥁 {t.cueBtn2}
-                  </button>
-                </div>
-              </div>
-
-            </div>
-
-            {/* Simulated Booking & Spec redirection calls */}
-            <div className="flex gap-4">
-              <button
-                onClick={() => { playGlassTap(); setIsBookOpen(true); }}
-                className="flex-1 px-4 py-3 bg-white text-black font-semibold font-mono text-[10px] tracking-widest uppercase hover:bg-[#ff7849] hover:text-white transition-all duration-500 rounded-none shadow-2xl cursor-pointer border-none"
-              >
-                {t.btnBookSetBeckerman}
-              </button>
-              <button
-                onClick={() => { playGlassTap(); setIsSpecOpen(true); }}
-                className="flex-1 px-4 py-3 border border-white/10 hover:border-white/20 text-white font-mono text-[10px] tracking-widest uppercase hover:bg-white/5 transition-all duration-500 rounded-none cursor-pointer bg-transparent"
-              >
-                {t.btnDetailsRider}
-              </button>
-            </div>
+            <PricingPanel
+              t={t}
+              onBook={() => { playGlassTap(); setIsBookOpen(true); }}
+              onSpec={() => { playGlassTap(); setIsSpecOpen(true); }}
+            />
           </motion.div>
         </section>
 

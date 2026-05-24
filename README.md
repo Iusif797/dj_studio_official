@@ -1,20 +1,37 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# DJ BECKERMAN — Official Website
 
-# Run and deploy your AI Studio app
+Premium landing page for DJ Beckerman: club sets, private events, and corporate shows in Prague.
 
-This contains everything you need to run your app locally.
+## Stack
 
-View your app in AI Studio: https://ai.studio/apps/39fc9692-4f01-4c92-ab98-2bc370d45d9e
+- React 19 + TypeScript
+- Vite 6
+- Tailwind CSS 4
+- Motion
 
-## Run Locally
+## Local Development
 
-**Prerequisites:**  Node.js
+**Requirements:** Node.js 18+
 
+```bash
+npm install
+npm run dev
+```
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+Open [http://localhost:3000](http://localhost:3000).
+
+## Production Build
+
+```bash
+npm run build
+npm run preview
+```
+
+## Deploy on Vercel
+
+1. Import the repository on [vercel.com](https://vercel.com/new)
+2. Framework preset: **Vite**
+3. Build command: `npm run build`
+4. Output directory: `dist`
+
+Configuration is included in `vercel.json`.

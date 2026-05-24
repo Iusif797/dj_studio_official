@@ -65,7 +65,7 @@ export default function ReservationModal({ isOpen, onClose, lang = 'en' }: Booki
   if (!isOpen) return null;
 
   return (
-    <div id="booking-drawer" className="fixed inset-0 z-50 bg-black/95 backdrop-blur-2xl flex items-center justify-center p-4 overflow-y-auto">
+    <div id="booking-drawer" className="fixed inset-0 z-50 bg-black/95 backdrop-blur-2xl flex items-start sm:items-center justify-center p-3 sm:p-4 overflow-y-auto overscroll-contain">
       {/* Background overlay close */}
       <div className="absolute inset-0" onClick={() => { playGlassTap(); onClose(); }} />
 
@@ -74,7 +74,7 @@ export default function ReservationModal({ isOpen, onClose, lang = 'en' }: Booki
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.98, y: 20 }}
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className="relative w-full max-w-xl bg-[#090909] border border-white/10 p-6 md:p-10 z-10 my-8"
+        className="relative w-full max-w-xl bg-[#090909] border border-white/10 p-4 sm:p-6 md:p-10 z-10 my-4 sm:my-8"
       >
         {/* Close button with luxury feel */}
         <button 
