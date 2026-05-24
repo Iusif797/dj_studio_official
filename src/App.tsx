@@ -201,6 +201,8 @@ export default function App() {
   const [vinylEffectLevel, setVinylEffectLevel] = useState(0); // sound bending feedback filter
 
   const scrollTimeoutRef = useRef<number | null>(null);
+  const rafRef = useRef<number | null>(null);
+  const prevSceneRef = useRef<SceneKey>('intro');
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoaded(true), 100);
@@ -208,7 +210,9 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    const handleScroll = () => {
+    let ticking = false;
+
+    const updateScroll = () => {
       const scrollY = window.scrollY;
       const windowHeight = window.innerHeight;
       const docHeight = document.documentElement.scrollHeight - windowHeight;
@@ -217,27 +221,40 @@ export default function App() {
 
       setScrollFraction(fraction);
       setScrollProgress(progress);
-      setIsScrolling(true);
 
       const sceneIndex = Math.min(SCENE_KEYS.length - 1, Math.max(0, Math.floor(fraction)));
-      setActiveScene(SCENE_KEYS[sceneIndex]);
+      const newScene = SCENE_KEYS[sceneIndex];
+      if (newScene !== prevSceneRef.current) {
+        prevSceneRef.current = newScene;
+        setActiveScene(newScene);
+      }
+
+      ticking = false;
+    };
+
+    const handleScroll = () => {
+      setIsScrolling(true);
+
+      if (!ticking) {
+        ticking = true;
+        rafRef.current = requestAnimationFrame(updateScroll);
+      }
 
       if (scrollTimeoutRef.current) {
         window.clearTimeout(scrollTimeoutRef.current);
       }
       scrollTimeoutRef.current = window.setTimeout(() => {
         setIsScrolling(false);
-      }, 100);
+      }, 150);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
+    updateScroll();
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
-      if (scrollTimeoutRef.current) {
-        window.clearTimeout(scrollTimeoutRef.current);
-      }
+      if (scrollTimeoutRef.current) window.clearTimeout(scrollTimeoutRef.current);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
   }, []);
 
@@ -461,10 +478,8 @@ export default function App() {
 
   const scrollToSection = (idx: number) => {
     playGlassTap();
-    window.scrollTo({
-      top: idx * window.innerHeight,
-      behavior: 'smooth'
-    });
+    const target = idx * window.innerHeight;
+    window.scrollTo({ top: target, behavior: 'smooth' });
   };
 
   // Calculate dynamic background Prague glow colors depending on active musical state
@@ -509,8 +524,8 @@ export default function App() {
 
         {/* LAYER 2: CHASSIS GOING DEEP INSIDE CHOPPERS (TUBES CORE) */}
         <motion.div 
-          style={getTubesStyle()}
-          className="absolute w-full h-full pointer-events-none transition-all duration-500 ease-out z-28 drop-shadow-[0_0_80px_rgba(255,120,73,0.3)] overflow-hidden bg-black"
+          style={{ ...getTubesStyle(), willChange: 'transform, opacity' }}
+          className="absolute w-full h-full pointer-events-none z-28 overflow-hidden bg-black"
         >
           <div className="relative w-full h-full">
             <img 
@@ -532,8 +547,8 @@ export default function App() {
 
         {/* LAYER 3: REAR GOLD CONNECTOR ARRAY AND CABLING */}
         <motion.div 
-          style={getCablesStyle()}
-          className="absolute w-full h-full pointer-events-none transition-all duration-500 ease-out z-26 drop-shadow-[0_45px_100px_rgba(0,0,0,0.95)] overflow-hidden bg-[#070707]"
+          style={{ ...getCablesStyle(), willChange: 'transform, opacity' }}
+          className="absolute w-full h-full pointer-events-none z-26 overflow-hidden bg-[#070707]"
         >
           <div className="relative w-full h-full">
             <img 
@@ -552,8 +567,8 @@ export default function App() {
 
         {/* LAYER 1: FIXED POSITION CENTRIFUGAL MAIN DJ CONTROLLER / BOOTH IMAGE OBJECT */}
         <motion.div 
-          style={getMixerStyle()}
-          className="absolute w-full h-full pointer-events-auto transition-all duration-500 ease-out z-30 drop-shadow-[0_45px_100px_rgba(0,0,0,0.95)]"
+          style={{ ...getMixerStyle(), willChange: 'transform, opacity' }}
+          className="absolute w-full h-full pointer-events-auto z-30"
         >
           <div className="relative w-full h-full group">
             {/* The main analogue "диджейский пульт" rendering with extreme photo detail */}

@@ -21,16 +21,6 @@ body,
   min-height: 100%;
 }
 
-html {
-  scroll-behavior: smooth;
-}
-
-@media (min-width: 768px) {
-  html {
-    scroll-snap-type: y proximity;
-  }
-}
-
 body {
   font-family: var(--font-sans);
   background-color: #050505;
@@ -80,16 +70,17 @@ body {
 .scene-card {
   pointer-events: auto;
   width: 100%;
-  max-width: min(100%, 100%);
+  max-width: 100%;
   background: rgb(0 0 0 / 0.92);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   padding: 1.25rem;
   border: 1px solid rgb(255 255 255 / 0.08);
-  max-height: 52dvh;
+  max-height: 54dvh;
   overflow-y: auto;
   overscroll-behavior: contain;
-  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.55);
+  box-shadow: 0 12px 24px -8px rgb(0 0 0 / 0.5);
+  transform: translateZ(0);
 }
 
 @media (hover: hover) {
@@ -106,7 +97,9 @@ body {
   .scene-card {
     max-width: 26rem;
     padding: 1.5rem;
-    max-height: 60dvh;
+    max-height: 62dvh;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
   }
 }
 
@@ -114,12 +107,9 @@ body {
   .scene-card {
     padding: 2rem;
     max-height: 80vh;
-  }
-}
-
-@media (min-width: 768px) {
-  .scene-section {
-    scroll-snap-align: start;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.55);
   }
 }
 
@@ -131,15 +121,15 @@ body {
   max-width: 80rem;
   margin-inline: auto;
   padding-inline: 0.5rem;
-  padding-top: 3.5rem;
-  padding-bottom: 6.5rem;
+  padding-top: 4.25rem;
+  padding-bottom: 5.5rem;
 }
 
 @media (min-width: 640px) {
   .scroll-chapters-shell {
     padding-inline: 1rem;
-    padding-top: 4.5rem;
-    padding-bottom: 7.5rem;
+    padding-top: 5rem;
+    padding-bottom: 6rem;
   }
 }
 
