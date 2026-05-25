@@ -21,11 +21,17 @@ body,
   min-height: 100%;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   font-family: var(--font-sans);
   background-color: #050505;
   color: #f7f7f7;
   overflow-x: hidden;
+  overflow-x: clip;
+  -webkit-tap-highlight-color: transparent;
 }
 
 #root {
@@ -33,12 +39,18 @@ body {
 }
 
 .scene-section {
-  height: 100dvh;
+  height: 100svh;
   min-height: 100svh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   padding-inline: max(0.75rem, env(safe-area-inset-left)) max(0.75rem, env(safe-area-inset-right));
+}
+
+@media (min-width: 768px) {
+  .scene-section {
+    height: 100dvh;
+  }
 }
 
 @media (min-width: 768px) {
@@ -100,7 +112,7 @@ body {
   -webkit-backdrop-filter: blur(8px);
   padding: 1.125rem;
   border: 1px solid rgb(255 255 255 / 0.08);
-  max-height: min(58dvh, calc(100dvh - 10.5rem));
+  max-height: min(58svh, calc(100svh - 10.5rem));
   overflow-y: auto;
   overscroll-behavior: contain;
   box-shadow: 0 12px 24px -8px rgb(0 0 0 / 0.5);
@@ -110,7 +122,7 @@ body {
 @media (min-width: 390px) {
   .scene-card {
     padding: 1.25rem;
-    max-height: min(60dvh, calc(100dvh - 10rem));
+    max-height: min(60svh, calc(100svh - 10rem));
   }
 }
 
@@ -128,7 +140,7 @@ body {
   .scene-card {
     max-width: 28rem;
     padding: 1.5rem;
-    max-height: min(62dvh, calc(100dvh - 9rem));
+    max-height: min(62svh, calc(100svh - 9rem));
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
   }
@@ -226,7 +238,7 @@ body {
   }
 
   .scene-card--immersive {
-    max-height: min(70dvh, calc(100dvh - 8.75rem));
+    max-height: min(70svh, calc(100svh - 8.75rem));
     padding-top: 0;
     overflow-x: hidden;
   }
@@ -235,7 +247,7 @@ body {
     justify-content: flex-end;
     padding-bottom: 5.75rem;
     content-visibility: auto;
-    contain-intrinsic-size: 100dvh;
+    contain-intrinsic-size: 100svh;
   }
 
   .lang-switcher {

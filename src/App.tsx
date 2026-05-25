@@ -273,7 +273,7 @@ export default function App() {
   };
 
   return (
-    <div id="landing-root" className={`relative h-[1100vh] bg-[#050505] text-[#eaeaea] overflow-x-hidden transition-opacity duration-[1200ms] ease-out ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
+    <div id="landing-root" className={`relative h-[1100svh] md:h-[1100dvh] bg-[#050505] text-[#eaeaea] overflow-x-clip transition-opacity duration-[1200ms] ease-out ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
       <ScrollProgressBar />
       <NoiseOverlay />
 

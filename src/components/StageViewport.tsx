@@ -132,7 +132,7 @@ function StageViewport({
         }}
       >
         <div className="relative w-full h-full">
-          <img src={imageCables} alt="" loading="lazy" decoding="async" referrerPolicy="no-referrer" className="w-full h-full object-cover select-none animate-pulse" />
+          <img src={imageCables} alt="" loading="lazy" decoding="async" referrerPolicy="no-referrer" className="w-full h-full object-cover select-none" />
           <div className="absolute inset-x-0 bottom-4 text-center z-10">
             <span className="font-mono text-[7px] text-zinc-400 tracking-[0.25em] bg-black/85 px-2.5 py-1 border border-white/10 uppercase">
               SOLID MASS DIRECT OXYGEN-FREE RCA PORTS
