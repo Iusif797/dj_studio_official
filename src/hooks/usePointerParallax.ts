@@ -9,6 +9,13 @@ export function usePointerParallax(enabled: boolean) {
       return;
     }
 
+    const coarse = window.matchMedia('(pointer: coarse)').matches;
+    const mobile = window.matchMedia('(max-width: 767px)').matches;
+    if (coarse || mobile) {
+      setPointer({ x: 0.5, y: 0.5 });
+      return;
+    }
+
     const update = (event: PointerEvent) => {
       setPointer({
         x: event.clientX / window.innerWidth,

@@ -34,13 +34,16 @@ import VenuesSocialProof from './components/VenuesSocialProof';
 import MobileSceneNav from './components/MobileSceneNav';
 import NoiseOverlay from './components/NoiseOverlay';
 import LivingBlocksStage from './components/LivingBlocksStage';
+import SceneHeroBackdrop from './components/SceneHeroBackdrop';
 import { useLivingBridge } from './hooks/useLivingBridge';
 import { usePointerParallax } from './hooks/usePointerParallax';
+import { useDeviceProfile } from './hooks/useDeviceProfile';
 import { LIVING_ENTER_AT, LIVING_VIDEO_DURATION } from './constants/livingVideo';
+import { getSceneBackdropStyle } from './utils/sceneBackdropStyle';
 
 import { DJMixerState } from './types';
 import { translations } from './translations';
-import { imageMixer, imageSkyline, imageTubes, imageCables } from './assets/images';
+import { imageMixer, imageSkyline, imageTubes, imageCables, imageEventFormats, imageVenuesPrague } from './assets/images';
 
 const SCENE_KEYS = ['intro', 'isolators', 'vu-meters', 'vinyl', 'internals', 'cables', 'pricing', 'formats', 'venues', 'testimonials', 'faq'] as const;
 type SceneKey = (typeof SCENE_KEYS)[number];
@@ -191,7 +194,8 @@ export default function App() {
   const [scrollFraction, setScrollFraction] = useState(0);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [activeScene, setActiveScene] = useState<SceneKey>('intro');
-  const pointer = usePointerParallax(scrollFraction >= LIVING_ENTER_AT);
+  const device = useDeviceProfile();
+  const pointer = usePointerParallax(scrollFraction >= LIVING_ENTER_AT && !device.isMobile);
   const livingBridge = useLivingBridge(scrollFraction, pointer.x, pointer.y, LIVING_VIDEO_DURATION);
   const [isScrolling, setIsScrolling] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -381,7 +385,7 @@ export default function App() {
 
     // Blur focus effect when camera gets too close to faceplate holes
     let blur = 0;
-    if (scrollFraction > 3.0) {
+    if (scrollFraction > 3.0 && !device.isMobile) {
       blur = Math.min(24, (scrollFraction - 3.0) * 15);
     }
 
@@ -494,7 +498,7 @@ export default function App() {
       left: '50%',
       transform: `translate(-50%, -50%) translate3d(${x}vw, ${y}vh, 0) scale(${scale}) rotate(${rotate}deg) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
       opacity: opacity,
-      filter: scrollFraction > 5.4 ? `blur(${Math.min(16, (scrollFraction - 5.4) * 8)}px)` : 'none'
+      filter: scrollFraction > 5.4 && !device.isMobile ? `blur(${Math.min(16, (scrollFraction - 5.4) * 8)}px)` : 'none'
     };
   };
 
@@ -514,6 +518,9 @@ export default function App() {
     }
     return 'from-purple-950/15 via-[#06040a]/92 to-[#050505]';
   };
+
+  const formatsBackdrop = getSceneBackdropStyle(scrollFraction, 7, 8.35, device.isMobile);
+  const venuesBackdrop = getSceneBackdropStyle(scrollFraction, 8, 9.35, device.isMobile);
 
   return (
     <div id="landing-root" className={`relative h-[1100vh] bg-[#050505] text-[#eaeaea] overflow-x-hidden transition-opacity duration-[1200ms] ease-out ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
@@ -677,7 +684,23 @@ export default function App() {
           </div>
         </motion.div>
 
+        <SceneHeroBackdrop
+          src={imageEventFormats}
+          alt={t.formatsTitle}
+          label="08 / EVENT FORMATS // CLUB · CORPORATE · PRIVATE"
+          style={formatsBackdrop}
+        />
+
+        <SceneHeroBackdrop
+          src={imageVenuesPrague}
+          alt={t.venuesTitle}
+          label="09 / PRAGUE VENUES // TRUSTED STAGES"
+          style={venuesBackdrop}
+          glow="violet"
+        />
+
         {/* DYNAMIC BACKGROUND PARTICLE DRIFT & RADAR SWEEPS */}
+        {!device.isMobile && !device.isReducedMotion && (
         <CinemagraphEffects 
           scene={
             activeScene === 'isolators' ? 'touchpad' 
@@ -688,6 +711,7 @@ export default function App() {
           } 
           scrollProgress={scrollFraction / 6} 
         />
+        )}
 
         {/* Glowing Laser line pointers linking text details directly with hardware zones */}
         {activeScene === 'isolators' && (
@@ -715,6 +739,34 @@ export default function App() {
             />
             <circle cx="48%" cy="58%" r="3.5" fill="#ff7849" />
             <circle cx="64%" cy="58%" r="2" fill="#ff7849" />
+          </svg>
+        )}
+
+        {activeScene === 'formats' && (
+          <svg className="absolute inset-0 w-full h-full z-20 pointer-events-none hidden lg:block">
+            <motion.line
+              x1="28%" y1="42%" x2="42%" y2="42%"
+              stroke="#ff7849" strokeWidth="1" strokeDasharray="3 3"
+              initial={{ pathLength: 0 }}
+              animate={{ pathLength: 1 }}
+              transition={{ duration: 0.5 }}
+            />
+            <circle cx="42%" cy="42%" r="3.5" fill="#ff7849" />
+            <circle cx="28%" cy="42%" r="2" fill="#ff7849" />
+          </svg>
+        )}
+
+        {activeScene === 'venues' && (
+          <svg className="absolute inset-0 w-full h-full z-20 pointer-events-none hidden lg:block">
+            <motion.line
+              x1="26%" y1="48%" x2="40%" y2="48%"
+              stroke="#ff7849" strokeWidth="1" strokeDasharray="3 3"
+              initial={{ pathLength: 0 }}
+              animate={{ pathLength: 1 }}
+              transition={{ duration: 0.5 }}
+            />
+            <circle cx="40%" cy="48%" r="3.5" fill="#ff7849" />
+            <circle cx="26%" cy="48%" r="2" fill="#ff7849" />
           </svg>
         )}
       </div>
@@ -1157,19 +1209,21 @@ export default function App() {
           </motion.div>
         </section>
 
-        <section className="scene-section scene-section--start">
+        <section className="scene-section scene-section--start scene-section--immersive">
           <EventFormatsPanel
             t={t}
             isActive={activeScene === 'formats'}
+            reducedMotion={device.isReducedMotion}
             onBook={() => { playGlassTap(); setIsBookOpen(true); }}
             onNext={() => scrollToSection(8)}
           />
         </section>
 
-        <section className="scene-section scene-section--start">
+        <section className="scene-section scene-section--start scene-section--immersive">
           <VenuesSocialProof
             t={t}
             isActive={activeScene === 'venues'}
+            reducedMotion={device.isReducedMotion}
             onNext={() => scrollToSection(9)}
           />
         </section>

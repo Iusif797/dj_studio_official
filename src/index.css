@@ -162,10 +162,84 @@ body {
 
 @keyframes marquee {
   from {
-    transform: translateX(0);
+    transform: translate3d(0, 0, 0);
   }
   to {
-    transform: translateX(-50%);
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.marquee-track--active {
+  animation: marquee 28s linear infinite;
+}
+
+.scene-scanline {
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgb(255 255 255 / 0.03) 2px,
+    rgb(255 255 255 / 0.03) 4px
+  );
+  pointer-events: none;
+}
+
+.scene-hero-strip {
+  height: clamp(6.5rem, 22vw, 9rem);
+}
+
+@media (min-width: 768px) {
+  .scene-hero-strip {
+    height: clamp(7.5rem, 14vw, 10rem);
+  }
+}
+
+@media (max-width: 767px) {
+  .scene-card {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgb(0 0 0 / 0.94);
+  }
+
+  .scene-card--glass {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgb(8 8 8 / 0.96);
+  }
+
+  .scene-card--immersive {
+    max-height: min(70dvh, calc(100dvh - 8.75rem));
+    padding-top: 0;
+    overflow-x: hidden;
+  }
+
+  .scene-section--immersive {
+    justify-content: flex-end;
+    padding-bottom: 5.75rem;
+    content-visibility: auto;
+    contain-intrinsic-size: 100dvh;
+  }
+
+  .lang-switcher {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track--active {
+    animation: none;
+  }
+
+  .scene-scanline {
+    display: none;
+  }
+
+  .ambient-glow,
+  .animate-pulse,
+  .animate-ping,
+  .animate-bounce {
+    animation: none !important;
   }
 }
 
