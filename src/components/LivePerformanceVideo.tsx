@@ -15,6 +15,7 @@ type LivePerformanceVideoProps = {
   zoneProgress: number;
   filmIntensity: number;
   active: boolean;
+  reducedMotion?: boolean;
   videoRef: RefObject<HTMLVideoElement | null>;
 };
 
@@ -27,9 +28,10 @@ export default function LivePerformanceVideo({
   zoneProgress,
   filmIntensity,
   active,
+  reducedMotion = false,
   videoRef,
 }: LivePerformanceVideoProps) {
-  const smoothTime = useSmoothScrub(scrubTime, active);
+  const smoothTime = useSmoothScrub(scrubTime, active && !reducedMotion);
   const [videoSrc, setVideoSrc] = useState('/videos/performance-living.mp4');
 
   useEffect(() => {
@@ -39,17 +41,7 @@ export default function LivePerformanceVideo({
   useEffect(() => {
     const video = videoRef.current;
     if (!video || opacity <= 0.02) return;
-
-    const tick = () => syncVideoTime(video, smoothTime);
-    tick();
-
-    let frame = 0;
-    const loop = () => {
-      syncVideoTime(video, smoothTime);
-      frame = requestAnimationFrame(loop);
-    };
-    frame = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(frame);
+    syncVideoTime(video, smoothTime);
   }, [opacity, smoothTime, videoRef]);
 
   if (opacity <= 0.01) return null;

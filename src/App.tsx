@@ -1,9 +1,8 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Compass, 
   ArrowRight,
-  ChevronDown,
   Cpu,
   Sliders,
   Radio,
@@ -25,7 +24,6 @@ import AudioPlayer, {
   updateFilterSweep,
   startSequencer,
 } from './components/AudioPlayer';
-import CinemagraphEffects from './components/CinemagraphEffects';
 import SpecOverlay from './components/SpecOverlay';
 import ReservationModal from './components/ReservationModal';
 import PricingPanel from './components/PricingPanel';
@@ -34,21 +32,15 @@ import VenuesSocialProof from './components/VenuesSocialProof';
 import MobileSceneNav from './components/MobileSceneNav';
 import NoiseOverlay from './components/NoiseOverlay';
 import LivingBlocksStage from './components/LivingBlocksStage';
-import SceneHeroBackdrop from './components/SceneHeroBackdrop';
-import { useLivingBridge } from './hooks/useLivingBridge';
-import { usePointerParallax } from './hooks/usePointerParallax';
+import StageViewport from './components/StageViewport';
+import ScrollProgressBar from './components/ScrollProgressBar';
+import ScrollContinueHint from './components/ScrollContinueHint';
+import { useScrollController } from './hooks/useScrollController';
 import { useDeviceProfile } from './hooks/useDeviceProfile';
-import { LIVING_ENTER_AT, LIVING_VIDEO_DURATION } from './constants/livingVideo';
-import { getSceneBackdropStyle } from './utils/sceneBackdropStyle';
+import { POST_MIXER_SCENES, SceneKey } from './constants/scenes';
 
 import { DJMixerState } from './types';
 import { translations } from './translations';
-import { imageMixer, imageSkyline, imageTubes, imageCables, imageEventFormats, imageVenuesPrague } from './assets/images';
-
-const SCENE_KEYS = ['intro', 'isolators', 'vu-meters', 'vinyl', 'internals', 'cables', 'pricing', 'formats', 'venues', 'testimonials', 'faq'] as const;
-type SceneKey = (typeof SCENE_KEYS)[number];
-
-const POST_MIXER_SCENES: SceneKey[] = ['pricing', 'formats', 'venues', 'testimonials', 'faq'];
 
 // Spatial Hotspot targets on the Custom Analogue DJ Mixer
 const HOTSPOTS = [
@@ -104,34 +96,6 @@ const SECTIONS = [
   { label: 'ТЕХНИЧЕСКИЙ РАЙДЕР', num: '06', key: 'cables' },
   { label: 'ТАРИФЫ И ЦЕНЫ', num: '07', key: 'pricing' }
 ];
-
-// 3D Camera coordinates for the physical mixer object (7 chapters of the fly-through)
-const SCENE_POSITIONS = [
-  // Scene 1: Intro -> Wide, impressive perspective layout
-  { scale: 1.0, x: 0, y: -2, rotate: -7, rotateX: 28, rotateY: -8 },
-  // Scene 2: Alps Master-Isolator Center Knobs Focus
-  { scale: 2.1, x: -14, y: 38, rotate: 8, rotateX: 18, rotateY: 12 },
-  // Scene 3: Amber VU Meters right panel needles
-  { scale: 2.4, x: 16, y: -18, rotate: -12, rotateX: 12, rotateY: -6 },
-  // Scene 4: Technics Direct Drive Left Platter Turntable
-  { scale: 1.95, x: -18, y: -24, rotate: 26, rotateX: 16, rotateY: 8 },
-  // Scene 5: Zooming directly INTO one of the ventilation grilles of the faceplate to penetrate the chassis! High scale.
-  { scale: 12.0, x: 10, y: 15, rotate: -10, rotateX: 35, rotateY: -15 },
-  // Scene 6: Moving past parts, exiting through rear connection plate
-  { scale: 5.5, x: -15, y: -20, rotate: 18, rotateX: -20, rotateY: 40 },
-  // Scene 7: Pricing — panel on the right
-  { scale: 1.15, x: -22, y: 1, rotate: 2, rotateX: 5, rotateY: -2 },
-  // Scene 8: Event formats — mixer offscreen
-  { scale: 1.0, x: 0, y: 0, rotate: 0, rotateX: 0, rotateY: 0 },
-  // Scene 9: Venues — mixer offscreen
-  { scale: 1.0, x: 0, y: 0, rotate: 0, rotateX: 0, rotateY: 0 },
-  // Scene 10: Testimonials — mixer offscreen
-  { scale: 1.0, x: 0, y: 0, rotate: 0, rotateX: 0, rotateY: 0 },
-  // Scene 11: FAQ — mixer offscreen
-  { scale: 1.0, x: 0, y: 0, rotate: 0, rotateX: 0, rotateY: 0 }
-];
-
-const lerp = (start: number, end: number, amt: number) => (1 - amt) * start + amt * end;
 
 export default function App() {
   const [lang, setLang] = useState<'en' | 'cs' | 'ru'>(() => {
@@ -191,13 +155,9 @@ export default function App() {
     }
   ];
 
-  const [scrollFraction, setScrollFraction] = useState(0);
-  const [scrollProgress, setScrollProgress] = useState(0);
   const [activeScene, setActiveScene] = useState<SceneKey>('intro');
   const device = useDeviceProfile();
-  const pointer = usePointerParallax(scrollFraction >= LIVING_ENTER_AT && !device.isMobile);
-  const livingBridge = useLivingBridge(scrollFraction, pointer.x, pointer.y, LIVING_VIDEO_DURATION);
-  const [isScrolling, setIsScrolling] = useState(false);
+  useScrollController(setActiveScene);
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Modals status
@@ -226,66 +186,17 @@ export default function App() {
   const [dragAngle, setDragAngle] = useState(0);
   const [vinylEffectLevel, setVinylEffectLevel] = useState(0); // sound bending feedback filter
 
-  const scrollTimeoutRef = useRef<number | null>(null);
-  const rafRef = useRef<number | null>(null);
-  const prevSceneRef = useRef<SceneKey>('intro');
-
   useEffect(() => {
     const timer = setTimeout(() => setIsLoaded(true), 100);
     return () => clearTimeout(timer);
   }, []);
 
+  const mixerStageScenes: SceneKey[] = ['intro', 'isolators', 'vu-meters', 'vinyl', 'internals', 'cables'];
+  const vuSceneActive = mixerStageScenes.includes(activeScene);
+
   useEffect(() => {
-    let ticking = false;
+    if (!vuSceneActive && !mixerState.synthPlaying) return;
 
-    const updateScroll = () => {
-      const scrollY = window.scrollY;
-      const windowHeight = window.innerHeight;
-      const docHeight = document.documentElement.scrollHeight - windowHeight;
-      const fraction = windowHeight > 0 ? scrollY / windowHeight : 0;
-      const progress = docHeight > 0 ? Math.min(1, scrollY / docHeight) : 0;
-
-      setScrollFraction(fraction);
-      setScrollProgress(progress);
-
-      const sceneIndex = Math.min(SCENE_KEYS.length - 1, Math.max(0, Math.floor(fraction)));
-      const newScene = SCENE_KEYS[sceneIndex];
-      if (newScene !== prevSceneRef.current) {
-        prevSceneRef.current = newScene;
-        setActiveScene(newScene);
-      }
-
-      ticking = false;
-    };
-
-    const handleScroll = () => {
-      setIsScrolling(true);
-
-      if (!ticking) {
-        ticking = true;
-        rafRef.current = requestAnimationFrame(updateScroll);
-      }
-
-      if (scrollTimeoutRef.current) {
-        window.clearTimeout(scrollTimeoutRef.current);
-      }
-      scrollTimeoutRef.current = window.setTimeout(() => {
-        setIsScrolling(false);
-      }, 150);
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    updateScroll();
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      if (scrollTimeoutRef.current) window.clearTimeout(scrollTimeoutRef.current);
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    };
-  }, []);
-
-  // Handle continuous mechanical bouncing of VU needles to music rhythm
-  useEffect(() => {
     let animId: number;
     const animateNeedles = () => {
       if (mixerState.synthPlaying) {
@@ -311,7 +222,7 @@ export default function App() {
     };
     animateNeedles();
     return () => cancelAnimationFrame(animId);
-  }, [mixerState.synthPlaying, mixerState.bassEQ, mixerState.midEQ, mixerState.masterVolume, isScratching]);
+  }, [mixerState.synthPlaying, mixerState.bassEQ, mixerState.midEQ, mixerState.masterVolume, isScratching, vuSceneActive]);
 
   // Adjust pitch fader - changes BPM of synthesizer directly
   const adjustPitch = (pitchVal: number) => {
@@ -355,421 +266,27 @@ export default function App() {
     setMixerState(prev => ({ ...prev, filterFreq: snapBackFreq }));
   };
 
-  // Outer mixer chassis motion style
-  const getMixerStyle = () => {
-    const maxIdx = SCENE_POSITIONS.length - 1;
-    const rawIdx = Math.floor(scrollFraction);
-    const baseIdx = Math.max(0, Math.min(maxIdx - 1, rawIdx));
-    const targetIdx = Math.min(maxIdx, baseIdx + 1);
-    const subt = Math.max(0, Math.min(1, scrollFraction - baseIdx));
-
-    // Smooth cubic ease-in-out curve
-    const eased = subt < 0.5 ? 4 * subt * subt * subt : 1 - Math.pow(-2 * subt + 2, 3) / 2;
-
-    const start = SCENE_POSITIONS[baseIdx];
-    const end = SCENE_POSITIONS[targetIdx];
-
-    const currentScale = lerp(start.scale, end.scale, eased);
-    const x = lerp(start.x, end.x, eased);
-    const y = lerp(start.y, end.y, eased);
-    const rotate = lerp(start.rotate, end.rotate, eased);
-    const rotateX = lerp(start.rotateX, end.rotateX, eased);
-    const rotateY = lerp(start.rotateY, end.rotateY, eased);
-
-    // Calculate dynamic opacity fade out as scrollFraction approaches/passes 4.0
-    let opacity = 1.0;
-    if (scrollFraction > 3.0) {
-      // Fade out between 3.0 and 3.9
-      opacity = Math.max(0, 1 - (scrollFraction - 3.0) / 0.9);
-    }
-
-    // Blur focus effect when camera gets too close to faceplate holes
-    let blur = 0;
-    if (scrollFraction > 3.0 && !device.isMobile) {
-      blur = Math.min(24, (scrollFraction - 3.0) * 15);
-    }
-
-    return {
-      top: '50%',
-      left: '50%',
-      transform: `translate(-50%, -50%) translate3d(${x}vw, ${y}vh, 0) scale(${currentScale}) rotate(${rotate}deg) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
-      opacity: opacity,
-      filter: blur > 0 ? `blur(${blur}px)` : 'none'
-    };
-  };
-
-  // Internal tubes chamber motion style
-  const getTubesStyle = () => {
-    if (scrollFraction <= 2.8) {
-      return { display: 'none', opacity: 0 };
-    }
-
-    let opacity = 0;
-    if (scrollFraction > 2.8 && scrollFraction <= 3.6) {
-      // Fade in
-      opacity = (scrollFraction - 2.8) / 0.8;
-    } else if (scrollFraction > 3.6 && scrollFraction <= 4.4) {
-      opacity = 1.0;
-    } else if (scrollFraction > 4.4 && scrollFraction <= 5.2) {
-      // Fade out
-      opacity = Math.max(0, 1 - (scrollFraction - 4.4) / 0.8);
-    }
-
-    // Scale
-    let scale = 0.2;
-    if (scrollFraction > 2.8 && scrollFraction <= 4.0) {
-      const t = (scrollFraction - 2.8) / 1.2;
-      scale = lerp(0.2, 1.1, t);
-    } else if (scrollFraction > 4.0) {
-      const t = (scrollFraction - 4.0) / 1.2;
-      scale = lerp(1.1, 8.0, t);
-    }
-
-    const maxIdx = SCENE_POSITIONS.length - 1;
-    const rawIdx = Math.floor(scrollFraction);
-    const baseIdx = Math.max(0, Math.min(maxIdx - 1, rawIdx));
-    const targetIdx = Math.min(maxIdx, baseIdx + 1);
-    const subt = Math.max(0, Math.min(1, scrollFraction - baseIdx));
-    const eased = subt < 0.5 ? 4 * subt * subt * subt : 1 - Math.pow(-2 * subt + 2, 3) / 2;
-
-    const start = SCENE_POSITIONS[baseIdx];
-    const end = SCENE_POSITIONS[targetIdx];
-
-    const x = lerp(start.x, end.x, eased);
-    const y = lerp(start.y, end.y, eased);
-    const rotate = lerp(start.rotate, end.rotate, eased);
-    const rotateX = lerp(start.rotateX, end.rotateX, eased);
-    const rotateY = lerp(start.rotateY, end.rotateY, eased);
-
-    return {
-      top: '50%',
-      left: '50%',
-      transform: `translate(-50%, -50%) translate3d(${x}vw, ${y}vh, 0) scale(${scale}) rotate(${rotate}deg) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
-      opacity: opacity,
-      filter: scrollFraction > 4.6 ? `blur(${Math.min(16, (scrollFraction - 4.6) * 10)}px)` : 'none'
-    };
-  };
-
-  // Rear connections style
-  const getCablesStyle = () => {
-    if (scrollFraction <= 4.0) {
-      return { display: 'none', opacity: 0 };
-    }
-
-    let opacity = 0;
-    if (scrollFraction > 4.0 && scrollFraction <= 4.8) {
-      // Fade in
-      opacity = (scrollFraction - 4.0) / 0.8;
-    } else if (scrollFraction > 4.8 && scrollFraction <= 5.4) {
-      opacity = 1.0;
-    } else if (scrollFraction > 5.4 && scrollFraction <= 6.2) {
-      // Fade out as simulator takes focus
-      opacity = Math.max(0, 1 - (scrollFraction - 5.4) / 0.8);
-    }
-
-    // Scale
-    let scale = 0.25;
-    if (scrollFraction > 4.0 && scrollFraction <= 5.0) {
-      const t = (scrollFraction - 4.0) / 1.0;
-      scale = lerp(0.25, 1.15, t);
-    } else if (scrollFraction > 5.0) {
-      const t = (scrollFraction - 5.0) / 1.2;
-      scale = lerp(1.15, 3.5, t);
-    }
-
-    const maxIdx = SCENE_POSITIONS.length - 1;
-    const rawIdx = Math.floor(scrollFraction);
-    const baseIdx = Math.max(0, Math.min(maxIdx - 1, rawIdx));
-    const targetIdx = Math.min(maxIdx, baseIdx + 1);
-    const subt = Math.max(0, Math.min(1, scrollFraction - baseIdx));
-    const eased = subt < 0.5 ? 4 * subt * subt * subt : 1 - Math.pow(-2 * subt + 2, 3) / 2;
-
-    const start = SCENE_POSITIONS[baseIdx];
-    const end = SCENE_POSITIONS[targetIdx];
-
-    const x = lerp(start.x, end.x, eased);
-    const y = lerp(start.y, end.y, eased);
-    const rotate = lerp(start.rotate, end.rotate, eased);
-    const rotateX = lerp(start.rotateX, end.rotateX, eased);
-    const rotateY = lerp(start.rotateY, end.rotateY, eased);
-
-    return {
-      top: '50%',
-      left: '50%',
-      transform: `translate(-50%, -50%) translate3d(${x}vw, ${y}vh, 0) scale(${scale}) rotate(${rotate}deg) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
-      opacity: opacity,
-      filter: scrollFraction > 5.4 && !device.isMobile ? `blur(${Math.min(16, (scrollFraction - 5.4) * 8)}px)` : 'none'
-    };
-  };
-
   const scrollToSection = (idx: number) => {
     playGlassTap();
     const target = idx * window.innerHeight;
     window.scrollTo({ top: target, behavior: 'smooth' });
   };
 
-  // Calculate dynamic background Prague glow colors depending on active musical state
-  const getAmbientLightFilter = () => {
-    if (mixerState.synthPlaying) {
-      const pulseColor = Math.sin(Date.now() * 0.01) > 0;
-      return pulseColor 
-        ? 'from-red-950/20 via-[#100402]/95 to-[#050505]'
-        : 'from-orange-950/25 via-[#0b0502]/95 to-[#050505]';
-    }
-    return 'from-purple-950/15 via-[#06040a]/92 to-[#050505]';
-  };
-
-  const formatsBackdrop = getSceneBackdropStyle(scrollFraction, 7, 8.35, device.isMobile);
-  const venuesBackdrop = getSceneBackdropStyle(scrollFraction, 8, 9.35, device.isMobile);
-
   return (
     <div id="landing-root" className={`relative h-[1100vh] bg-[#050505] text-[#eaeaea] overflow-x-hidden transition-opacity duration-[1200ms] ease-out ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
-      <div
-        className="fixed top-0 left-0 h-[2px] bg-gradient-to-r from-[#ff7849] to-[#ff7849]/60 z-[60] transition-[width] duration-150 ease-out"
-        style={{ width: `${scrollProgress * 100}%` }}
-      />
+      <ScrollProgressBar />
       <NoiseOverlay />
 
-      {/* FIXED VIEWPORT BACKGROUND SCENERY CANVAS */}
-      <div id="stage-viewport" className="stage-backdrop-mobile fixed inset-0 w-full h-full overflow-hidden select-none pointer-events-none z-0">
-        
-        {/* Immersive twilight skyline blurry backdrop */}
-        <div 
-          className="absolute inset-0 bg-cover bg-center opacity-10 transition-opacity duration-[1500ms]"
-          style={{ backgroundImage: `url(${imageSkyline})` }}
-        />
-
-        {/* Dynamic amber backlight glow - reactive to sound loops! */}
-        <div id="dynamic-backlight" className={`absolute inset-0 bg-gradient-to-b ${getAmbientLightFilter()} transition-all duration-[800ms] z-10 pointer-events-none`} />
-        
-        {/* High contrast vignette shadow boundaries */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_30%,rgba(0,0,0,0.92)_100%)] z-20 pointer-events-none" />
-
-        {/* Live coordinate lines grid indicator rails */}
-        <div className="absolute inset-0 z-20 opacity-25 pointer-events-none hidden md:flex justify-between px-10 items-center border-x border-white/5 mx-10">
-          <span className="font-mono text-[8px] text-white/10 [writing-mode:vertical-lr] tracking-[0.4em]">BECKERMAN // PRAGUE DJ SERVICES</span>
-          <span className="font-mono text-[8px] text-white/10 [writing-mode:vertical-lr] tracking-[0.4em]">CLUB · PRIVATE · CORPORATE</span>
-        </div>
-
-        {/* LAYER 2: CHASSIS GOING DEEP INSIDE CHOPPERS (TUBES CORE) */}
-        <motion.div 
-          style={{ ...getTubesStyle(), willChange: 'transform, opacity' }}
-          className="absolute w-full h-full pointer-events-none z-28 overflow-hidden bg-black"
-        >
-          <div className="relative w-full h-full">
-            <img 
-              src={imageTubes} 
-              alt="Аналоговые электронные лампы высокого разрешения и конденсаторы" 
-              referrerPolicy="no-referrer"
-              className="w-full h-full object-cover select-none"
-            />
-            {/* Ambient hot electronic furnace orange backlighting overlay inside chambers */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#ff7849]/20 via-transparent to-red-500/5 mix-blend-color-dodge animate-pulse" />
-            <div className="absolute inset-0 bg-black/10 mix-blend-multiply" />
-            <div className="absolute inset-x-0 bottom-4 text-center z-10">
-              <span className="font-mono text-[7px] text-[#ff7849] tracking-[0.25em] bg-black/85 px-2.5 py-1 border border-[#ff7849]/20 uppercase">
-                INTEGRATED THERMIONIC TRIODES CORE ACTIVE
-              </span>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* LAYER 3: REAR GOLD CONNECTOR ARRAY AND CABLING */}
-        <motion.div 
-          style={{ ...getCablesStyle(), willChange: 'transform, opacity' }}
-          className="absolute w-full h-full pointer-events-none z-26 overflow-hidden bg-[#070707]"
-        >
-          <div className="relative w-full h-full">
-            <img 
-              src={imageCables} 
-              alt="Золотые RCA разъемы, аудиофильные кабели в оплетке" 
-              referrerPolicy="no-referrer"
-              className="w-full h-full object-cover select-none animate-pulse"
-            />
-            <div className="absolute inset-x-0 bottom-4 text-center z-10">
-              <span className="font-mono text-[7px] text-zinc-400 tracking-[0.25em] bg-black/85 px-2.5 py-1 border border-white/10 uppercase">
-                SOLID MASS DIRECT OXYGEN-FREE RCA PORTS
-              </span>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* LAYER 1: FIXED POSITION CENTRIFUGAL MAIN DJ CONTROLLER / BOOTH IMAGE OBJECT */}
-        <motion.div 
-          style={{ ...getMixerStyle(), willChange: 'transform, opacity' }}
-          className="absolute w-full h-full pointer-events-auto z-30"
-        >
-          <div className="relative w-full h-full group">
-            {/* The main analogue "диджейский пульт" rendering with extreme photo detail */}
-            <img 
-              src={imageMixer} 
-              alt="Beckerman Custom Rotary DJ Mixer и виниловые проигрыватели Technics" 
-              referrerPolicy="no-referrer"
-              className="w-full h-full object-cover select-none pointer-events-none rounded-sm border border-white/5"
-            />
-            
-            {/* Ambient metallic gleam reflecting across faceplates */}
-            <div className="absolute inset-x-12 top-10 bottom-10 bg-gradient-to-r from-transparent via-white/5 to-transparent skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-[1200ms] ease-out pointer-events-none" />
-
-            {/* Simulated live flashing physical warning LEDs on the mixer panel */}
-            <div className="absolute top-[37%] left-[49.5%] -translate-x-1/2 flex flex-col items-center gap-1 opacity-90 scale-75 select-none pointer-events-none">
-              <span className="font-mono text-[6px] tracking-widest text-[#ff7849] uppercase animate-pulse">MASTER PEAK</span>
-              <div className="flex gap-1">
-                <span className={`w-1 h-1 rounded-full ${vuLeft > 85 ? 'bg-red-500 shadow-[0_0_5px_rgba(239,68,68,0.8)]' : 'bg-white/10'}`} />
-                <span className={`w-3 h-1 ${mixerState.synthPlaying ? 'bg-[#ff7849]' : 'bg-white/15'}`} />
-                <span className={`w-1 h-1 rounded-full ${vuRight > 85 ? 'bg-red-500 shadow-[0_0_5px_rgba(239,68,68,0.8)]' : 'bg-white/10'}`} />
-              </div>
-            </div>
-
-            {/* Interactive Clickable Hotspots overlayed directly on the DJ Mixer image during intro, inviting fly-in */}
-            {activeScene === 'intro' && (
-              <div className="hidden md:block">
-                {/* Hotspot 1: ALPS ISOLATORS */}
-                <button
-                  onClick={() => scrollToSection(1)}
-                  className="absolute top-[26%] left-[50%] -translate-x-1/2 -translate-y-1/2 group/h1 flex items-center gap-2 z-50 focus:outline-none outline-none cursor-pointer"
-                >
-                  <span className="relative flex h-6 w-6 items-center justify-center">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-3 w-3 bg-[#ff7849]"></span>
-                  </span>
-                  <span className="opacity-0 group-hover/h1:opacity-100 transition-opacity bg-black/90 text-[8px] tracking-[0.2em] text-white font-mono px-2 py-1 border border-white/10 uppercase whitespace-nowrap">
-                    {t.hotspotShort1}
-                  </span>
-                </button>
-
-                {/* Hotspot 2: VU NEEDLES */}
-                <button
-                  onClick={() => scrollToSection(2)}
-                  className="absolute top-[39%] left-[50%] -translate-x-1/2 -translate-y-1/2 group/h2 flex items-center gap-2 z-50 focus:outline-none outline-none cursor-pointer"
-                >
-                  <span className="relative flex h-6 w-6 items-center justify-center">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-3 w-3 bg-[#ff7849]"></span>
-                  </span>
-                  <span className="opacity-0 group-hover/h2:opacity-100 transition-opacity bg-black/90 text-[8px] tracking-[0.2em] text-white font-mono px-2 py-1 border border-white/10 uppercase whitespace-nowrap">
-                    {t.hotspotShort2}
-                  </span>
-                </button>
-
-                {/* Hotspot 3: TECHNICS PLATTER */}
-                <button
-                  onClick={() => scrollToSection(3)}
-                  className="absolute top-[68%] left-[22%] -translate-x-1/2 -translate-y-1/2 group/h3 flex items-center gap-2 z-50 focus:outline-none outline-none cursor-pointer"
-                >
-                  <span className="relative flex h-6 w-6 items-center justify-center">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-3 w-3 bg-[#ff7849]"></span>
-                  </span>
-                  <span className="opacity-0 group-hover/h3:opacity-100 transition-opacity bg-black/90 text-[8px] tracking-[0.2em] text-white font-mono px-2 py-1 border border-white/10 uppercase whitespace-nowrap">
-                    {t.hotspotShort3}
-                  </span>
-                </button>
-
-                {/* Hotspot 4: PERFORMANCE CONTROL BOARD */}
-                <button
-                  onClick={() => scrollToSection(4)}
-                  className="absolute top-[80%] left-[50%] -translate-x-1/2 -translate-y-1/2 group/h4 flex items-center gap-2 z-50 focus:outline-none outline-none cursor-pointer"
-                >
-                  <span className="relative flex h-6 w-6 items-center justify-center">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-3 w-3 bg-[#ff7849]"></span>
-                  </span>
-                  <span className="opacity-0 group-hover/h4:opacity-100 transition-opacity bg-black/90 text-[8px] tracking-[0.2em] text-white font-mono px-2 py-1 border border-white/10 uppercase whitespace-nowrap">
-                    {t.hotspotShort4}
-                  </span>
-                </button>
-              </div>
-            )}
-          </div>
-        </motion.div>
-
-        <SceneHeroBackdrop
-          src={imageEventFormats}
-          alt={t.formatsTitle}
-          label="08 / EVENT FORMATS // CLUB · CORPORATE · PRIVATE"
-          style={formatsBackdrop}
-        />
-
-        <SceneHeroBackdrop
-          src={imageVenuesPrague}
-          alt={t.venuesTitle}
-          label="09 / PRAGUE VENUES // TRUSTED STAGES"
-          style={venuesBackdrop}
-          glow="violet"
-        />
-
-        {/* DYNAMIC BACKGROUND PARTICLE DRIFT & RADAR SWEEPS */}
-        {!device.isMobile && !device.isReducedMotion && (
-        <CinemagraphEffects 
-          scene={
-            activeScene === 'isolators' ? 'touchpad' 
-            : activeScene === 'vu-meters' ? 'rotary' 
-            : activeScene === 'pricing' || activeScene === 'formats' || activeScene === 'venues' ? 'pricing' 
-            : livingBridge.isActive ? 'pricing'
-            : 'intro'
-          } 
-          scrollProgress={scrollFraction / 6} 
-        />
-        )}
-
-        {/* Glowing Laser line pointers linking text details directly with hardware zones */}
-        {activeScene === 'isolators' && (
-          <svg className="absolute inset-0 w-full h-full z-20 pointer-events-none hidden lg:block">
-            <motion.line 
-              x1="36%" y1="32%" x2="52%" y2="32%"
-              stroke="#ff7849" strokeWidth="1" strokeDasharray="3 3"
-              initial={{ pathLength: 0 }}
-              animate={{ pathLength: 1 }}
-              transition={{ duration: 0.5 }}
-            />
-            <circle cx="52%" cy="32%" r="3.5" fill="#ff7849" />
-            <circle cx="36%" cy="32%" r="2" fill="#ff7849" />
-          </svg>
-        )}
-
-        {activeScene === 'vu-meters' && (
-          <svg className="absolute inset-0 w-full h-full z-20 pointer-events-none hidden lg:block">
-            <motion.line 
-              x1="48%" y1="58%" x2="64%" y2="58%"
-              stroke="#ff7849" strokeWidth="1" strokeDasharray="3 3"
-              initial={{ pathLength: 0 }}
-              animate={{ pathLength: 1 }}
-              transition={{ duration: 0.5 }}
-            />
-            <circle cx="48%" cy="58%" r="3.5" fill="#ff7849" />
-            <circle cx="64%" cy="58%" r="2" fill="#ff7849" />
-          </svg>
-        )}
-
-        {activeScene === 'formats' && (
-          <svg className="absolute inset-0 w-full h-full z-20 pointer-events-none hidden lg:block">
-            <motion.line
-              x1="28%" y1="42%" x2="42%" y2="42%"
-              stroke="#ff7849" strokeWidth="1" strokeDasharray="3 3"
-              initial={{ pathLength: 0 }}
-              animate={{ pathLength: 1 }}
-              transition={{ duration: 0.5 }}
-            />
-            <circle cx="42%" cy="42%" r="3.5" fill="#ff7849" />
-            <circle cx="28%" cy="42%" r="2" fill="#ff7849" />
-          </svg>
-        )}
-
-        {activeScene === 'venues' && (
-          <svg className="absolute inset-0 w-full h-full z-20 pointer-events-none hidden lg:block">
-            <motion.line
-              x1="26%" y1="48%" x2="40%" y2="48%"
-              stroke="#ff7849" strokeWidth="1" strokeDasharray="3 3"
-              initial={{ pathLength: 0 }}
-              animate={{ pathLength: 1 }}
-              transition={{ duration: 0.5 }}
-            />
-            <circle cx="40%" cy="48%" r="3.5" fill="#ff7849" />
-            <circle cx="26%" cy="48%" r="2" fill="#ff7849" />
-          </svg>
-        )}
-      </div>
+      <StageViewport
+        activeScene={activeScene}
+        isMobile={device.isMobile}
+        isReducedMotion={device.isReducedMotion}
+        synthPlaying={mixerState.synthPlaying}
+        vuLeft={vuLeft}
+        vuRight={vuRight}
+        t={t}
+        onNavigate={scrollToSection}
+      />
 
       {/* LEFT STATIC CHAPTER HUD VERTICAL NAVIGATOR */}
       <div id="vertical-hud-navigator" className="fixed left-6 md:left-10 top-1/2 -translate-y-1/2 z-40 hidden md:flex flex-col gap-6 pointer-events-auto select-none">
@@ -847,18 +364,7 @@ export default function App() {
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
             </div>
 
-            {scrollFraction < 10 && (
-              <div 
-                className="flex flex-col items-center gap-1 opacity-60 hover:opacity-100 transition-opacity cursor-pointer text-white/40 hover:text-white"
-                onClick={() => {
-                  const currentIdx = Math.round(scrollFraction);
-                  scrollToSection(Math.min(10, currentIdx + 1));
-                }}
-              >
-                <span className="font-mono text-[8px] tracking-[0.22em] uppercase">{t.bottomScrollIntro}</span>
-                <ChevronDown size={14} className="animate-bounce" />
-              </div>
-            )}
+            <ScrollContinueHint label={t.bottomScrollIntro} onContinue={scrollToSection} />
 
             <div className={`flex items-center gap-3 transition-all duration-500 ${POST_MIXER_SCENES.includes(activeScene) ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
               <button 
@@ -1233,7 +739,7 @@ export default function App() {
 
       </div>
 
-      <LivingBlocksStage lang={lang} bridge={livingBridge} />
+      <LivingBlocksStage lang={lang} />
 
       {/* DETAILED BOOKING & SPECIFICATION OVERLAYS */}
       <AnimatePresence>
