@@ -77,11 +77,12 @@ export default function ReservationModal({ isOpen, onClose, lang = 'en' }: Booki
         className="relative w-full max-w-xl bg-[#090909] border border-white/10 p-4 sm:p-6 md:p-10 z-10 my-4 sm:my-8"
       >
         {/* Close button with luxury feel */}
-        <button 
+        <button
           onClick={() => { playGlassTap(); onClose(); }}
-          className="absolute top-6 right-6 p-2 border border-white/10 hover:border-white/20 text-white/50 hover:text-white transition-all outline-none focus:outline-none rounded-none cursor-pointer"
+          aria-label="Close"
+          className="absolute top-4 right-4 sm:top-6 sm:right-6 w-11 h-11 flex items-center justify-center border border-white/10 hover:border-white/30 text-white/60 hover:text-white transition-all outline-none focus:outline-none rounded-none cursor-pointer bg-black/40"
         >
-          <X size={12} />
+          <X size={14} />
         </button>
 
         <AnimatePresence mode="wait">
@@ -267,13 +268,13 @@ export default function ReservationModal({ isOpen, onClose, lang = 'en' }: Booki
               <div className="flex gap-3">
                 <button
                   onClick={handleReset}
-                  className="flex-1 border border-white/10 hover:border-white/20 text-white/40 hover:text-white/80 transition-colors uppercase font-mono text-[9px] tracking-wider py-2.5 rounded-none cursor-pointer"
+                  className="flex-1 min-h-11 border border-white/10 hover:border-white/20 text-white/40 hover:text-white/80 transition-colors uppercase font-mono text-[9px] tracking-wider py-3 rounded-none cursor-pointer"
                 >
                   {t.bookBtnNew}
                 </button>
                 <button
                   onClick={onClose}
-                  className="flex-1 bg-white text-black hover:bg-neutral-200 transition-colors uppercase font-mono text-[9px] tracking-wider py-2.5 rounded-none cursor-pointer"
+                  className="flex-1 min-h-11 bg-white text-black hover:bg-neutral-200 transition-colors uppercase font-mono text-[9px] tracking-wider py-3 rounded-none cursor-pointer"
                 >
                   {t.bookBtnClose}
                 </button>

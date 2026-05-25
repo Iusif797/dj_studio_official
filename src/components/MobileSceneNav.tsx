@@ -12,13 +12,14 @@ type MobileSceneNavProps = {
 
 export default function MobileSceneNav({ sections, activeKey, onSelect }: MobileSceneNavProps) {
   const activeIndex = sections.findIndex(s => s.key === activeKey);
+  void activeIndex;
 
   return (
     <nav
       aria-label="Scene navigation"
       className="md:hidden pointer-events-auto w-full"
     >
-      <div className="flex items-center justify-center gap-2.5 py-2">
+      <div className="flex items-center justify-center gap-1 py-1.5">
         {sections.map((section, index) => {
           const isActive = activeKey === section.key;
           return (
@@ -26,8 +27,9 @@ export default function MobileSceneNav({ sections, activeKey, onSelect }: Mobile
               key={section.num}
               type="button"
               onClick={() => onSelect(index)}
-              className="p-1 outline-none focus:outline-none cursor-pointer bg-transparent border-none"
+              className="relative flex items-center justify-center w-7 h-9 outline-none focus:outline-none cursor-pointer bg-transparent border-none p-0"
               aria-label={`Section ${section.num}`}
+              aria-current={isActive ? 'true' : undefined}
             >
               <span
                 className={`block rounded-full transition-all duration-300 ${

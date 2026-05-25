@@ -6,7 +6,7 @@ type SceneCardHeroProps = {
 
 export default function SceneCardHero({ src, alt, badge }: SceneCardHeroProps) {
   return (
-    <div className="scene-hero-strip relative -mx-1.125 -mt-1.125 mb-3 overflow-hidden border-b border-white/10 sm:-mx-1.25 sm:-mt-1.25 md:-mx-0 md:-mt-0 md:mb-4 md:rounded-sm md:border md:border-white/10">
+    <div className="scene-hero-strip relative mb-3 overflow-hidden border-b border-white/10 md:mb-4 md:rounded-sm md:border md:border-white/10">
       <img src={src} alt={alt} loading="lazy" decoding="async" className="h-full w-full object-cover" />
       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent" />
       <div className="scene-scanline absolute inset-0 opacity-20" />

@@ -96,13 +96,13 @@ export default function PricingPanel({ t, onBook, onSpec }: PricingPanelProps) {
       <div className="grid grid-cols-2 gap-2 sm:gap-3">
         <button
           onClick={onBook}
-          className="w-full px-3 sm:px-4 py-2.5 sm:py-3.5 bg-white text-black font-mono text-[8px] sm:text-[10px] tracking-widest uppercase hover:bg-[#ff7849] hover:text-white transition-all duration-500 rounded-none cursor-pointer border border-transparent"
+          className="w-full px-3 sm:px-4 min-h-11 py-3 sm:py-3.5 bg-white text-black font-mono text-[8.5px] sm:text-[10px] tracking-widest uppercase hover:bg-[#ff7849] hover:text-white active:bg-[#ff7849] active:text-white transition-all duration-500 rounded-none cursor-pointer border border-transparent"
         >
           {t.btnBookSetBeckerman}
         </button>
         <button
           onClick={onSpec}
-          className="w-full px-3 sm:px-4 py-2.5 sm:py-3.5 border border-white/10 hover:border-white/25 text-white font-mono text-[8px] sm:text-[10px] tracking-widest uppercase hover:bg-white/5 transition-all duration-500 rounded-none cursor-pointer bg-transparent"
+          className="w-full px-3 sm:px-4 min-h-11 py-3 sm:py-3.5 border border-white/10 hover:border-white/25 text-white font-mono text-[8.5px] sm:text-[10px] tracking-widest uppercase hover:bg-white/5 active:bg-white/5 transition-all duration-500 rounded-none cursor-pointer bg-transparent"
         >
           {t.btnDetailsRider}
         </button>

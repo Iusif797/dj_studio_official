@@ -61,10 +61,10 @@ export default function EventFormatsPanel({ t, isActive, onNext, onBook, reduced
       </div>
 
       <div className="flex flex-col sm:flex-row gap-2 pt-3 mt-3 border-t border-white/8">
-        <button type="button" onClick={onBook} className="flex-1 py-2.5 bg-white text-black font-mono text-[9px] tracking-[0.2em] uppercase hover:bg-[#ff7849] hover:text-white transition-colors duration-300 cursor-pointer border-none">
+        <button type="button" onClick={onBook} className="flex-1 min-h-11 py-3 bg-white text-black font-mono text-[9px] tracking-[0.2em] uppercase hover:bg-[#ff7849] hover:text-white active:bg-[#ff7849] active:text-white transition-colors duration-300 cursor-pointer border-none">
           {t.btnBookSet}
         </button>
-        <button type="button" onClick={onNext} className="flex-1 py-2.5 border border-white/15 text-white/80 hover:text-white font-mono text-[9px] tracking-[0.2em] uppercase transition-colors duration-300 cursor-pointer bg-transparent flex items-center justify-center gap-1.5">
+        <button type="button" onClick={onNext} className="flex-1 min-h-11 py-3 border border-white/15 text-white/80 hover:text-white active:bg-white/5 font-mono text-[9px] tracking-[0.2em] uppercase transition-colors duration-300 cursor-pointer bg-transparent flex items-center justify-center gap-1.5">
           {t.btnNextToVenues}
           <ArrowRight size={11} />
         </button>

@@ -66,7 +66,7 @@ export default function VenuesSocialProof({ t, isActive, onNext, reducedMotion }
         </div>
       </div>
 
-      <button type="button" onClick={onNext} className="w-full flex items-center justify-center gap-2 py-2.5 mt-3 text-white hover:text-[#ff7849] transition-colors duration-300 cursor-pointer bg-transparent border-none font-mono text-[9px] tracking-[0.2em] uppercase">
+      <button type="button" onClick={onNext} className="w-full flex items-center justify-center gap-2 min-h-11 py-3 mt-3 text-white hover:text-[#ff7849] active:text-[#ff7849] transition-colors duration-300 cursor-pointer bg-transparent border-none font-mono text-[9px] tracking-[0.2em] uppercase">
         {t.btnNextToTestimonials}
         <ArrowRight size={11} />
       </button>

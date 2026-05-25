@@ -315,10 +315,10 @@ export default function App() {
       <div id="hud-container" className="hud-shell">
         
         <header id="top-branding-bar" className="w-full pointer-events-auto">
-          <div className="flex w-full items-center justify-between gap-2">
-            <div className="flex flex-col cursor-pointer min-w-0" onClick={() => scrollToSection(0)}>
-              <h1 className="font-serif text-[18px] sm:text-[22px] md:text-[32px] font-light leading-none tracking-[0.12em] sm:tracking-[0.16em] md:tracking-[0.18em] text-white">BECKERMAN</h1>
-              <span className="font-mono text-[6px] sm:text-[7px] md:text-[8px] tracking-[0.18em] sm:tracking-[0.28em] md:tracking-[0.34em] text-[#ff7849] uppercase mt-0.5 sm:mt-1 font-semibold line-clamp-1">{t.brandSub}</span>
+          <div className="flex w-full items-center justify-between gap-3">
+            <div className="flex flex-col cursor-pointer min-w-0 shrink" onClick={() => scrollToSection(0)}>
+              <h1 className="font-serif text-[17px] sm:text-[22px] md:text-[32px] font-light leading-none tracking-[0.14em] sm:tracking-[0.16em] md:tracking-[0.18em] text-white">BECKERMAN</h1>
+              <span className="font-mono text-[7px] sm:text-[7px] md:text-[8px] tracking-[0.22em] sm:tracking-[0.28em] md:tracking-[0.34em] text-[#ff7849] uppercase mt-1 font-semibold line-clamp-1">{t.brandSub}</span>
             </div>
 
             <div className="flex items-center gap-2 sm:gap-3 shrink-0">
@@ -356,7 +356,7 @@ export default function App() {
         </header>
 
         {/* BOTTOM INFORMATIONAL BAR */}
-        <div id="bottom-hud-bar" className="w-full flex flex-col gap-1.5 sm:gap-3 pointer-events-auto">
+        <div id="bottom-hud-bar" className="w-full flex flex-col gap-2 sm:gap-3 pointer-events-auto">
           <div className="hidden md:flex md:flex-row md:justify-between md:items-end w-full gap-4">
             <div className="flex items-center gap-3 bg-black/55 border border-white/5 backdrop-blur-md px-4 py-2.5 font-mono text-[8px] text-white/40 tracking-widest uppercase">
               <Compass size={11} className="text-[#ff7849] animate-[spin_10s_linear_infinite] shrink-0" />
@@ -390,18 +390,18 @@ export default function App() {
           />
 
           <div className={`grid grid-cols-2 gap-2 md:hidden transition-all duration-500 ${POST_MIXER_SCENES.includes(activeScene) ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
-            <button 
+            <button
               onClick={() => { playGlassTap(); setIsSpecOpen(true); }}
-              className="py-2.5 border border-white/10 bg-black/60 backdrop-blur-md text-white/70 cursor-pointer outline-none focus:outline-none font-mono text-[8px] tracking-widest uppercase transition-all duration-300 text-center"
+              className="min-h-11 py-3 border border-white/10 bg-black/60 backdrop-blur-md text-white/70 cursor-pointer outline-none focus:outline-none font-mono text-[8.5px] tracking-widest uppercase transition-all duration-300 text-center active:bg-white/5"
             >
               {t.btnAudioRider}
             </button>
-            <button 
+            <button
               onClick={() => { playGlassTap(); setIsBookOpen(true); }}
-              className="py-2.5 bg-white text-black border border-transparent cursor-pointer outline-none focus:outline-none font-mono text-[8px] tracking-widest uppercase transition-all duration-300 flex items-center justify-center gap-1"
+              className="min-h-11 py-3 bg-white text-black border border-transparent cursor-pointer outline-none focus:outline-none font-mono text-[8.5px] tracking-widest uppercase transition-all duration-300 flex items-center justify-center gap-1.5 active:bg-[#ff7849] active:text-white"
             >
               {t.btnBookSet}
-              <ArrowRight size={10} />
+              <ArrowRight size={11} />
             </button>
           </div>
         </div>
@@ -554,11 +554,11 @@ export default function App() {
 
             {/* INTERACTIVE MODERN JOG PLATTER SIMULATOR DISPLAY */}
             <div className="bg-black/80 border border-white/5 p-4 flex flex-col items-center gap-4 relative">
-              <span className="font-mono text-[6px] text-[#ff7849] absolute top-2 left-3 uppercase tracking-widest bg-black/50 px-1 border border-[#ff7849]/20 z-10">JOG WHEEL DECK-A ACTIVE</span>
+              <span className="font-mono text-[7px] text-[#ff7849] absolute top-2 left-3 uppercase tracking-widest bg-black/50 px-1.5 py-0.5 border border-[#ff7849]/20 z-10">JOG WHEEL DECK-A ACTIVE</span>
               
-              <div className="relative w-40 h-40 bg-zinc-950 rounded-full border-[6px] border-[#1d1d23] flex items-center justify-center shadow-[0_0_20px_rgba(0,0,0,0.8)] select-none group touch-none">
+              <div className="relative w-36 h-36 sm:w-40 sm:h-40 bg-zinc-950 rounded-full border-[6px] border-[#1d1d23] flex items-center justify-center shadow-[0_0_20px_rgba(0,0,0,0.8)] select-none group touch-none">
                 {/* Outer jog-feel grip indices */}
-                <div className="absolute inset-0 rounded-full border border-dashed border-zinc-750 opacity-15 animate-[spin_50s_linear_infinite]" />
+                <div className="absolute inset-0 rounded-full border border-dashed border-zinc-700 opacity-15 animate-[spin_50s_linear_infinite]" />
                 <div className="absolute inset-1 rounded-full border border-zinc-800 opacity-20" />
                 <div className="absolute inset-3.5 rounded-full border-2 border-zinc-900/60" />
                 <div className="absolute inset-7 rounded-full border border-zinc-900" />
@@ -603,7 +603,7 @@ export default function App() {
                   onChange={(e) => adjustPitch(parseFloat(e.target.value))}
                   className="w-full h-1 bg-white/10 accent-[#ff7849] appearance-none cursor-pointer outline-none"
                 />
-                <div className="flex justify-between text-[6.5px] text-white/20 font-medium">
+                <div className="flex justify-between text-[8px] text-white/30 font-medium tracking-wider uppercase">
                   <span>{t.pitchDeepGroove}</span>
                   <span>{t.pitchHardTechno}</span>
                 </div>
