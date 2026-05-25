@@ -1,0 +1,87 @@
+import { useRef } from 'react';
+import LivePerformanceVideo from './LivePerformanceVideo';
+import LivingSectionPanel from './LivingSectionPanel';
+import Testimonials from './Testimonials';
+import FAQ from './FAQ';
+import { LivingBridgeState } from '../hooks/useLivingBridge';
+import { useVideoElement } from '../hooks/useSmoothScrub';
+
+type Lang = 'en' | 'cs' | 'ru';
+
+type LivingBlocksStageProps = {
+  lang: Lang;
+  bridge: LivingBridgeState;
+};
+
+export default function LivingBlocksStage({ lang, bridge }: LivingBlocksStageProps) {
+  const videoRef = useVideoElement();
+
+  if (!bridge.isActive) return null;
+
+  const contentLift = bridge.zoneProgress * -56 + bridge.parallaxY * 0.2;
+  const contentDrift = bridge.parallaxX * 0.12;
+
+  return (
+    <div
+      className="fixed inset-0 z-25 pointer-events-none overflow-hidden"
+      aria-hidden={bridge.testimonialsOpacity < 0.05 && bridge.faqOpacity < 0.05}
+    >
+      <LivePerformanceVideo
+        videoRef={videoRef}
+        active={bridge.isActive}
+        opacity={bridge.videoOpacity}
+        scale={bridge.videoScale}
+        scrubTime={bridge.scrubTime}
+        parallaxX={bridge.parallaxX}
+        parallaxY={bridge.parallaxY}
+        zoneProgress={bridge.zoneProgress}
+        filmIntensity={bridge.filmIntensity}
+      />
+
+      <div
+        className="absolute inset-0 flex items-center justify-center px-3 sm:px-6 md:px-12 md:pl-48 md:pr-10 pt-16 pb-24 md:pt-0 md:pb-16"
+        style={{ transform: `translate3d(${contentDrift}px, ${contentLift}px, 0)` }}
+      >
+        <LivingSectionPanel
+          opacity={bridge.testimonialsOpacity}
+          reveal={bridge.testimonialsReveal}
+          blur={bridge.testimonialsBlur}
+          shiftY={(1 - bridge.testimonialsOpacity) * 56 - bridge.transitionIntensity * 18}
+          shiftX={-bridge.transitionIntensity * 28}
+          scale={0.94 + bridge.testimonialsOpacity * 0.06}
+          clipOrigin="left"
+        >
+          <Testimonials lang={lang} isActive variant="living" />
+        </LivingSectionPanel>
+
+        <LivingSectionPanel
+          opacity={bridge.faqOpacity}
+          reveal={bridge.faqReveal}
+          blur={(1 - bridge.faqReveal) * 10}
+          shiftY={(1 - bridge.faqOpacity) * 64}
+          shiftX={bridge.transitionIntensity * 24}
+          scale={0.93 + bridge.faqOpacity * 0.07}
+          clipOrigin="right"
+        >
+          <FAQ lang={lang} isActive variant="living" />
+        </LivingSectionPanel>
+      </div>
+
+      {bridge.isTransitioning && (
+        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2.5 pointer-events-none">
+          <div className="flex items-center gap-3 font-mono text-[7px] tracking-[0.45em] text-white/50 uppercase">
+            <span className={bridge.zoneProgress < 0.55 ? 'text-[#ff7849]' : ''}>10 · Reviews</span>
+            <span className="w-8 h-px bg-white/20" />
+            <span className={bridge.zoneProgress >= 0.55 ? 'text-[#ff7849]' : ''}>11 · FAQ</span>
+          </div>
+          <div className="w-40 h-[2px] bg-white/10 rounded-full overflow-hidden backdrop-blur-sm">
+            <div
+              className="h-full bg-gradient-to-r from-[#ff7849] via-white/80 to-[#ff7849]"
+              style={{ width: `${bridge.zoneProgress * 100}%` }}
+            />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

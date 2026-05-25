@@ -20,7 +20,7 @@ const FAQ_DATA: Record<
   }
 > = {
   ru: {
-    sub: '09 / ЧАСТЫЕ ВОПРОСЫ',
+    sub: '11 / ЧАСТЫЕ ВОПРОСЫ',
     title: 'Всё, что нужно знать',
     desc: 'Ответы на типовые вопросы организаторов клубных и частных мероприятий. Если не нашли свой — пишите напрямую.',
     items: [
@@ -63,7 +63,7 @@ const FAQ_DATA: Record<
     ctaEmail: 'Email',
   },
   en: {
-    sub: '09 / FREQUENTLY ASKED QUESTIONS',
+    sub: '11 / FREQUENTLY ASKED QUESTIONS',
     title: 'Everything You Need to Know',
     desc: 'Answers to typical questions from club and private event organizers. If yours isn\'t here — message me directly.',
     items: [
@@ -106,7 +106,7 @@ const FAQ_DATA: Record<
     ctaEmail: 'Email',
   },
   cs: {
-    sub: '09 / ČASTÉ DOTAZY',
+    sub: '11 / ČASTÉ DOTAZY',
     title: 'Vše, co potřebujete vědět',
     desc: 'Odpovědi na typické dotazy pořadatelů klubových i soukromých akcí. Pokud nenajdete svůj, napište přímo.',
     items: [
@@ -153,18 +153,25 @@ const FAQ_DATA: Record<
 type FAQProps = {
   lang: Lang;
   isActive: boolean;
+  variant?: 'scene' | 'living';
 };
 
-export default function FAQ({ lang, isActive }: FAQProps) {
+export default function FAQ({ lang, isActive, variant = 'scene' }: FAQProps) {
   const data = FAQ_DATA[lang];
   const [openIdx, setOpenIdx] = useState<number | null>(0);
+  const isLiving = variant === 'living';
+  const shellClass = isLiving
+    ? 'pointer-events-auto w-full rounded-none border border-white/12 bg-black/30 backdrop-blur-2xl shadow-[0_32px_120px_rgba(0,0,0,0.65)] p-4 sm:p-5 md:p-8 ring-1 ring-white/5'
+    : `pointer-events-auto w-full ${isActive ? 'block' : 'hidden'}`;
+
+  if (!isLiving && !isActive) return null;
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: isActive ? 1 : 0, y: isActive ? 0 : 30 }}
+      initial={isLiving ? false : { opacity: 0, y: 30 }}
+      animate={isLiving ? undefined : { opacity: isActive ? 1 : 0, y: isActive ? 0 : 30 }}
       transition={{ duration: 0.6 }}
-      className={`pointer-events-auto w-full ${isActive ? 'block' : 'hidden'}`}
+      className={shellClass}
     >
       <div className="max-w-3xl mx-auto space-y-4 sm:space-y-6">
         <div className="space-y-2 text-center md:text-left">

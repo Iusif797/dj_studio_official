@@ -29,17 +29,23 @@ import CinemagraphEffects from './components/CinemagraphEffects';
 import SpecOverlay from './components/SpecOverlay';
 import ReservationModal from './components/ReservationModal';
 import PricingPanel from './components/PricingPanel';
+import EventFormatsPanel from './components/EventFormatsPanel';
+import VenuesSocialProof from './components/VenuesSocialProof';
 import MobileSceneNav from './components/MobileSceneNav';
 import NoiseOverlay from './components/NoiseOverlay';
-import Testimonials from './components/Testimonials';
-import FAQ from './components/FAQ';
+import LivingBlocksStage from './components/LivingBlocksStage';
+import { useLivingBridge } from './hooks/useLivingBridge';
+import { usePointerParallax } from './hooks/usePointerParallax';
+import { LIVING_ENTER_AT, LIVING_VIDEO_DURATION } from './constants/livingVideo';
 
 import { DJMixerState } from './types';
 import { translations } from './translations';
 import { imageMixer, imageSkyline, imageTubes, imageCables } from './assets/images';
 
-const SCENE_KEYS = ['intro', 'isolators', 'vu-meters', 'vinyl', 'internals', 'cables', 'pricing', 'testimonials', 'faq'] as const;
+const SCENE_KEYS = ['intro', 'isolators', 'vu-meters', 'vinyl', 'internals', 'cables', 'pricing', 'formats', 'venues', 'testimonials', 'faq'] as const;
 type SceneKey = (typeof SCENE_KEYS)[number];
+
+const POST_MIXER_SCENES: SceneKey[] = ['pricing', 'formats', 'venues', 'testimonials', 'faq'];
 
 // Spatial Hotspot targets on the Custom Analogue DJ Mixer
 const HOTSPOTS = [
@@ -110,11 +116,15 @@ const SCENE_POSITIONS = [
   { scale: 12.0, x: 10, y: 15, rotate: -10, rotateX: 35, rotateY: -15 },
   // Scene 6: Moving past parts, exiting through rear connection plate
   { scale: 5.5, x: -15, y: -20, rotate: 18, rotateX: -20, rotateY: 40 },
-  // Scene 7: Settle on side, leaving performance control faders open on the right
+  // Scene 7: Pricing — panel on the right
   { scale: 1.15, x: -22, y: 1, rotate: 2, rotateX: 5, rotateY: -2 },
-  // Scene 8: Testimonials — mixer already faded out (offscreen)
+  // Scene 8: Event formats — mixer offscreen
   { scale: 1.0, x: 0, y: 0, rotate: 0, rotateX: 0, rotateY: 0 },
-  // Scene 9: FAQ — mixer already faded out (offscreen)
+  // Scene 9: Venues — mixer offscreen
+  { scale: 1.0, x: 0, y: 0, rotate: 0, rotateX: 0, rotateY: 0 },
+  // Scene 10: Testimonials — mixer offscreen
+  { scale: 1.0, x: 0, y: 0, rotate: 0, rotateX: 0, rotateY: 0 },
+  // Scene 11: FAQ — mixer offscreen
   { scale: 1.0, x: 0, y: 0, rotate: 0, rotateX: 0, rotateY: 0 }
 ];
 
@@ -139,8 +149,10 @@ export default function App() {
     { label: t.navResidencies, num: '05', key: 'internals' },
     { label: t.navRider, num: '06', key: 'cables' },
     { label: t.navPricing, num: '07', key: 'pricing' },
-    { label: t.navTestimonials, num: '08', key: 'testimonials' },
-    { label: t.navFaq, num: '09', key: 'faq' }
+    { label: t.navFormats, num: '08', key: 'formats' },
+    { label: t.navVenues, num: '09', key: 'venues' },
+    { label: t.navTestimonials, num: '10', key: 'testimonials' },
+    { label: t.navFaq, num: '11', key: 'faq' }
   ];
 
   const localizedHotspots = [
@@ -179,6 +191,8 @@ export default function App() {
   const [scrollFraction, setScrollFraction] = useState(0);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [activeScene, setActiveScene] = useState<SceneKey>('intro');
+  const pointer = usePointerParallax(scrollFraction >= LIVING_ENTER_AT);
+  const livingBridge = useLivingBridge(scrollFraction, pointer.x, pointer.y, LIVING_VIDEO_DURATION);
   const [isScrolling, setIsScrolling] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -502,7 +516,7 @@ export default function App() {
   };
 
   return (
-    <div id="landing-root" className={`relative h-[900vh] bg-[#050505] text-[#eaeaea] overflow-x-hidden transition-opacity duration-[1200ms] ease-out ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
+    <div id="landing-root" className={`relative h-[1100vh] bg-[#050505] text-[#eaeaea] overflow-x-hidden transition-opacity duration-[1200ms] ease-out ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
       <div
         className="fixed top-0 left-0 h-[2px] bg-gradient-to-r from-[#ff7849] to-[#ff7849]/60 z-[60] transition-[width] duration-150 ease-out"
         style={{ width: `${scrollProgress * 100}%` }}
@@ -668,7 +682,8 @@ export default function App() {
           scene={
             activeScene === 'isolators' ? 'touchpad' 
             : activeScene === 'vu-meters' ? 'rotary' 
-            : activeScene === 'pricing' ? 'pricing' 
+            : activeScene === 'pricing' || activeScene === 'formats' || activeScene === 'venues' ? 'pricing' 
+            : livingBridge.isActive ? 'pricing'
             : 'intro'
           } 
           scrollProgress={scrollFraction / 6} 
@@ -737,25 +752,30 @@ export default function App() {
               <span className="font-mono text-[6px] sm:text-[7px] md:text-[8px] tracking-[0.18em] sm:tracking-[0.28em] md:tracking-[0.34em] text-[#ff7849] uppercase mt-0.5 sm:mt-1 font-semibold line-clamp-1">{t.brandSub}</span>
             </div>
 
-            <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
-              <div className="flex items-center border border-white/10 bg-black/50 px-1 sm:px-2 py-0.5 sm:py-1.5 font-mono select-none">
-                {(['en', 'cs', 'ru'] as const).map((l) => (
-                  <button
-                    key={l}
-                    onClick={() => {
-                      playRotaryClick();
-                      setLang(l);
-                    }}
-                    className={`px-1 sm:px-1.5 py-px text-[7px] sm:text-[8.5px] uppercase tracking-wider transition-all duration-300 border-none bg-transparent cursor-pointer ${lang === l ? 'text-[#ff7849] font-bold' : 'text-white/45 hover:text-white'}`}
-                  >
-                    {l}
-                  </button>
+            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+              <div className="lang-switcher pointer-events-auto">
+                {(['en', 'cs', 'ru'] as const).map((l, index) => (
+                  <span key={l} className="contents">
+                    {index > 0 && <span className="lang-switcher__sep" aria-hidden>|</span>}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        playRotaryClick();
+                        setLang(l);
+                      }}
+                      className={`lang-switcher__btn ${lang === l ? 'lang-switcher__btn--active' : ''}`}
+                      aria-pressed={lang === l}
+                      aria-label={l.toUpperCase()}
+                    >
+                      {l}
+                    </button>
+                  </span>
                 ))}
               </div>
             </div>
           </div>
 
-          <div className={`hidden md:flex items-center justify-end gap-3 w-full mt-4 transition-all duration-500 ${activeScene === 'pricing' || activeScene === 'testimonials' || activeScene === 'faq' ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+          <div className={`hidden md:flex items-center justify-end gap-3 w-full mt-4 transition-all duration-500 ${POST_MIXER_SCENES.includes(activeScene) ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
             <AudioPlayer />
             <button
               onClick={() => { playGlassTap(); setIsBookOpen(true); }}
@@ -775,12 +795,12 @@ export default function App() {
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
             </div>
 
-            {scrollFraction < 8 && (
+            {scrollFraction < 10 && (
               <div 
                 className="flex flex-col items-center gap-1 opacity-60 hover:opacity-100 transition-opacity cursor-pointer text-white/40 hover:text-white"
                 onClick={() => {
                   const currentIdx = Math.round(scrollFraction);
-                  scrollToSection(Math.min(8, currentIdx + 1));
+                  scrollToSection(Math.min(10, currentIdx + 1));
                 }}
               >
                 <span className="font-mono text-[8px] tracking-[0.22em] uppercase">{t.bottomScrollIntro}</span>
@@ -788,7 +808,7 @@ export default function App() {
               </div>
             )}
 
-            <div className={`flex items-center gap-3 transition-all duration-500 ${activeScene === 'pricing' || activeScene === 'testimonials' || activeScene === 'faq' ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+            <div className={`flex items-center gap-3 transition-all duration-500 ${POST_MIXER_SCENES.includes(activeScene) ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
               <button 
                 onClick={() => { playGlassTap(); setIsSpecOpen(true); }}
                 className="px-6 py-3 border border-white/10 hover:border-white/25 bg-black/50 backdrop-blur-md text-white/70 hover:text-white cursor-pointer outline-none focus:outline-none font-mono text-[9px] tracking-widest uppercase transition-all duration-500"
@@ -811,7 +831,7 @@ export default function App() {
             onSelect={scrollToSection}
           />
 
-          <div className={`grid grid-cols-2 gap-2 md:hidden transition-all duration-500 ${activeScene === 'pricing' || activeScene === 'testimonials' || activeScene === 'faq' ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+          <div className={`grid grid-cols-2 gap-2 md:hidden transition-all duration-500 ${POST_MIXER_SCENES.includes(activeScene) ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
             <button 
               onClick={() => { playGlassTap(); setIsSpecOpen(true); }}
               className="py-2.5 border border-white/10 bg-black/60 backdrop-blur-md text-white/70 cursor-pointer outline-none focus:outline-none font-mono text-[8px] tracking-widest uppercase transition-all duration-300 text-center"
@@ -1137,17 +1157,29 @@ export default function App() {
           </motion.div>
         </section>
 
-        {/* SCENE 8: Testimonials */}
         <section className="scene-section scene-section--start">
-          <Testimonials lang={lang} isActive={activeScene === 'testimonials'} />
+          <EventFormatsPanel
+            t={t}
+            isActive={activeScene === 'formats'}
+            onBook={() => { playGlassTap(); setIsBookOpen(true); }}
+            onNext={() => scrollToSection(8)}
+          />
         </section>
 
-        {/* SCENE 9: FAQ */}
         <section className="scene-section scene-section--start">
-          <FAQ lang={lang} isActive={activeScene === 'faq'} />
+          <VenuesSocialProof
+            t={t}
+            isActive={activeScene === 'venues'}
+            onNext={() => scrollToSection(9)}
+          />
         </section>
+
+        <section className="scene-section scene-section--start" aria-label="testimonials" />
+        <section className="scene-section scene-section--start" aria-label="faq" />
 
       </div>
+
+      <LivingBlocksStage lang={lang} bridge={livingBridge} />
 
       {/* DETAILED BOOKING & SPECIFICATION OVERLAYS */}
       <AnimatePresence>

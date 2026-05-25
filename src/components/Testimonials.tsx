@@ -13,7 +13,7 @@ type Testimonial = {
 
 const TESTIMONIALS: Record<Lang, { sub: string; title: string; desc: string; items: Testimonial[] }> = {
   ru: {
-    sub: '08 / ОТЗЫВЫ КЛИЕНТОВ',
+    sub: '10 / ОТЗЫВЫ КЛИЕНТОВ',
     title: 'Что говорят организаторы',
     desc: 'Доверие топовых клубов и брендов Праги — главный показатель качества. Реальные отзывы от тех, с кем мы работали.',
     items: [
@@ -62,7 +62,7 @@ const TESTIMONIALS: Record<Lang, { sub: string; title: string; desc: string; ite
     ],
   },
   en: {
-    sub: '08 / CLIENT TESTIMONIALS',
+    sub: '10 / CLIENT TESTIMONIALS',
     title: 'What Organizers Say',
     desc: "Trust from Prague's top clubs and brands — the truest measure of quality. Real feedback from people we've worked with.",
     items: [
@@ -111,7 +111,7 @@ const TESTIMONIALS: Record<Lang, { sub: string; title: string; desc: string; ite
     ],
   },
   cs: {
-    sub: '08 / REFERENCE KLIENTŮ',
+    sub: '10 / REFERENCE KLIENTŮ',
     title: 'Co říkají pořadatelé',
     desc: 'Důvěra předních klubů a značek Prahy je nejlepší ukazatel kvality. Skutečné reference od těch, s kým jsme spolupracovali.',
     items: [
@@ -164,17 +164,24 @@ const TESTIMONIALS: Record<Lang, { sub: string; title: string; desc: string; ite
 type TestimonialsProps = {
   lang: Lang;
   isActive: boolean;
+  variant?: 'scene' | 'living';
 };
 
-export default function Testimonials({ lang, isActive }: TestimonialsProps) {
+export default function Testimonials({ lang, isActive, variant = 'scene' }: TestimonialsProps) {
   const data = TESTIMONIALS[lang];
+  const isLiving = variant === 'living';
+  const shellClass = isLiving
+    ? 'pointer-events-auto w-full rounded-none border border-white/12 bg-black/25 backdrop-blur-2xl shadow-[0_32px_120px_rgba(0,0,0,0.65)] p-4 sm:p-5 md:p-8 ring-1 ring-white/5'
+    : `pointer-events-auto w-full ${isActive ? 'block' : 'hidden'}`;
+
+  if (!isLiving && !isActive) return null;
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: isActive ? 1 : 0, y: isActive ? 0 : 30 }}
+      initial={isLiving ? false : { opacity: 0, y: 30 }}
+      animate={isLiving ? undefined : { opacity: isActive ? 1 : 0, y: isActive ? 0 : 30 }}
       transition={{ duration: 0.6 }}
-      className={`pointer-events-auto w-full ${isActive ? 'block' : 'hidden'}`}
+      className={shellClass}
     >
       <div className="max-w-6xl mx-auto space-y-5 sm:space-y-7">
         <div className="space-y-2 text-center md:text-left">

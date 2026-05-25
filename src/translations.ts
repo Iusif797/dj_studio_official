@@ -11,6 +11,8 @@ export interface TranslationSet {
   navResidencies: string;
   navRider: string;
   navPricing: string;
+  navFormats: string;
+  navVenues: string;
   navTestimonials: string;
   navFaq: string;
   bottomCoordinates: string;
@@ -88,6 +90,34 @@ export interface TranslationSet {
   riderMetric2: string;
   riderMetric2Val: string;
   btnNextToPricing: string;
+  btnNextToVenues: string;
+  btnNextToTestimonials: string;
+
+  formatsSub: string;
+  formatsTitle: string;
+  formatsDesc: string;
+  formatClubTag: string;
+  formatClubName: string;
+  formatClubDesc: string;
+  formatClubDuration: string;
+  formatCorpTag: string;
+  formatCorpName: string;
+  formatCorpDesc: string;
+  formatCorpDuration: string;
+  formatPrivateTag: string;
+  formatPrivateName: string;
+  formatPrivateDesc: string;
+  formatPrivateDuration: string;
+
+  venuesSub: string;
+  venuesTitle: string;
+  venuesDesc: string;
+  venuesStat1Label: string;
+  venuesStat1Val: string;
+  venuesStat2Label: string;
+  venuesStat2Val: string;
+  venuesStat3Label: string;
+  venuesStat3Val: string;
 
   hotspotShort1: string;
   hotspotShort2: string;
@@ -232,6 +262,8 @@ export const translations: Record<'en' | 'cs' | 'ru', TranslationSet> = {
     navResidencies: "RESIDENCIES",
     navRider: "TECH RIDER",
     navPricing: "RATES & PACKAGES",
+    navFormats: "EVENT FORMATS",
+    navVenues: "VENUES & TRUST",
     navTestimonials: "TESTIMONIALS",
     navFaq: "FAQ",
     bottomCoordinates: "PRAGUE NIGHTLIFE // PREMIUM DJ SERVICES",
@@ -305,6 +337,34 @@ export const translations: Record<'en' | 'cs' | 'ru', TranslationSet> = {
     riderMetric2: "INTERRES CONNECTOR",
     riderMetric2Val: "Neutrik XLR Gold Line",
     btnNextToPricing: "View Rates & Packages",
+    btnNextToVenues: "Venues & Experience",
+    btnNextToTestimonials: "Client Reviews",
+
+    formatsSub: "EVENT FORMATS",
+    formatsTitle: "Every Stage, One Signature",
+    formatsDesc: "From intimate bar grooves to corporate showcases — tailored sets with Pioneer-grade precision and crowd-first energy.",
+    formatClubTag: "Nightlife",
+    formatClubName: "Club & Bar",
+    formatClubDesc: "Peak-hour house, tech house and open-format flow built for dance floors that never sit down.",
+    formatClubDuration: "2–5 hours",
+    formatCorpTag: "Business",
+    formatCorpName: "Corporate",
+    formatCorpDesc: "Brand-safe sound, smooth transitions and a professional presence for launches, galas and team events.",
+    formatCorpDuration: "2–4 hours",
+    formatPrivateTag: "Celebration",
+    formatPrivateName: "Private Party",
+    formatPrivateDesc: "Birthdays, weddings and private gatherings with custom playlists and guest-request handling.",
+    formatPrivateDuration: "Up to 6 hours",
+
+    venuesSub: "PRAGUE & BEYOND",
+    venuesTitle: "Trusted on Real Stages",
+    venuesDesc: "Regular sets across Prague nightlife and private events — the same rig, the same energy, every room.",
+    venuesStat1Label: "Events played",
+    venuesStat1Val: "120+",
+    venuesStat2Label: "Avg. rating",
+    venuesStat2Val: "4.9 / 5",
+    venuesStat3Label: "Repeat bookings",
+    venuesStat3Val: "68%",
 
     hotspotShort1: "01 / ATMOSPHERE",
     hotspotShort2: "02 / MIXSETS",
@@ -445,6 +505,8 @@ export const translations: Record<'en' | 'cs' | 'ru', TranslationSet> = {
     navResidencies: "REZIDENCE",
     navRider: "TECHNICKÝ RIDER",
     navPricing: "CENÍK & BALÍČKY",
+    navFormats: "FORMÁTY AKCÍ",
+    navVenues: "MÍSTA & DŮVĚRA",
     navTestimonials: "REFERENCE",
     navFaq: "FAQ",
     bottomCoordinates: "PRAŽSKÝ NOČNÍ ŽIVOT // PRÉMIOVÍ DJ SLUŽBY",
@@ -518,6 +580,34 @@ export const translations: Record<'en' | 'cs' | 'ru', TranslationSet> = {
     riderMetric2: "ZAPOJENÍ & PORTY",
     riderMetric2Val: "Neutrik XLR Gold Line",
     btnNextToPricing: "Zobrazit Ceník a Balíčky",
+    btnNextToVenues: "Místa & Zkušenosti",
+    btnNextToTestimonials: "Reference klientů",
+
+    formatsSub: "FORMÁTY AKCÍ",
+    formatsTitle: "Každá scéna, jeden styl",
+    formatsDesc: "Od intimních barů po firemní akce — sety na míru s precizním mixem a energií pro dav.",
+    formatClubTag: "Noční život",
+    formatClubName: "Klub & Bar",
+    formatClubDesc: "Peak-hour house, tech house a open-format pro taneční parkety, které nezhasínají.",
+    formatClubDuration: "2–5 hodin",
+    formatCorpTag: "Business",
+    formatCorpName: "Firemní",
+    formatCorpDesc: "Profesionální přítomnost, hladké přechody a brand-safe zvuk pro launch party a galavečery.",
+    formatCorpDuration: "2–4 hodiny",
+    formatPrivateTag: "Oslava",
+    formatPrivateName: "Soukromá party",
+    formatPrivateDesc: "Narozeniny, svatby a soukromé akce s vlastním playlistem a přáními hostů.",
+    formatPrivateDuration: "Až 6 hodin",
+
+    venuesSub: "PRAHA & OKOLÍ",
+    venuesTitle: "Ověřeno na reálných pódiích",
+    venuesDesc: "Pravidelné sety v pražském nočním životě i na soukromých akcích — stejný rig, stejná energie.",
+    venuesStat1Label: "Odehraných akcí",
+    venuesStat1Val: "120+",
+    venuesStat2Label: "Průměrné hodnocení",
+    venuesStat2Val: "4,9 / 5",
+    venuesStat3Label: "Opakované objednávky",
+    venuesStat3Val: "68 %",
 
     hotspotShort1: "01 / ATMOSFÉRA",
     hotspotShort2: "02 / SETY",
@@ -658,6 +748,8 @@ export const translations: Record<'en' | 'cs' | 'ru', TranslationSet> = {
     navResidencies: "РЕЗИДЕНЦИИ",
     navRider: "ТЕХНИЧЕСКИЙ РАЙДЕР",
     navPricing: "ТАРИФЫ И ЦЕНЫ",
+    navFormats: "ФОРМАТЫ ИВЕНТОВ",
+    navVenues: "ПЛОЩАДКИ И ДОВЕРИЕ",
     navTestimonials: "ОТЗЫВЫ",
     navFaq: "ВОПРОСЫ",
     bottomCoordinates: "ПРАЖСКАЯ НОЧНАЯ ЖИЗНЬ // ПРЕМИАЛЬНЫЕ DJ УСЛУГИ",
@@ -731,6 +823,34 @@ export const translations: Record<'en' | 'cs' | 'ru', TranslationSet> = {
     riderMetric2: "КОММУТАЦИЯ & ПОРТЫ",
     riderMetric2Val: "Neutrik XLR Gold Line",
     btnNextToPricing: "Перейти к Тарифам и Ценам",
+    btnNextToVenues: "Площадки и опыт",
+    btnNextToTestimonials: "Отзывы клиентов",
+
+    formatsSub: "ФОРМАТЫ МЕРОПРИЯТИЙ",
+    formatsTitle: "Любая сцена — один почерк",
+    formatsDesc: "От камерных баров до корпоративов — сеты под задачу с Pioneer-точностью и энергией для зала.",
+    formatClubTag: "Ночная жизнь",
+    formatClubName: "Клуб и бар",
+    formatClubDesc: "Peak-hour house, tech house и open-format для танцполов, которые не останавливаются.",
+    formatClubDuration: "2–5 часов",
+    formatCorpTag: "Бизнес",
+    formatCorpName: "Корпоратив",
+    formatCorpDesc: "Brand-safe звук, плавные переходы и профессиональная подача для launch party и гала.",
+    formatCorpDuration: "2–4 часа",
+    formatPrivateTag: "Праздник",
+    formatPrivateName: "Частная вечеринка",
+    formatPrivateDesc: "Дни рождения, свадьбы и private events с кастомным плейлистом и запросами гостей.",
+    formatPrivateDuration: "До 6 часов",
+
+    venuesSub: "ПРАГА И НЕ ТОЛЬКО",
+    venuesTitle: "Проверено на реальных сценах",
+    venuesDesc: "Регулярные сеты в пражской nightlife и на частных ивентах — тот же rig, та же энергия.",
+    venuesStat1Label: "Сыграно ивентов",
+    venuesStat1Val: "120+",
+    venuesStat2Label: "Средняя оценка",
+    venuesStat2Val: "4,9 / 5",
+    venuesStat3Label: "Повторные брони",
+    venuesStat3Val: "68%",
 
     hotspotShort1: "01 / АТМОСФЕРА",
     hotspotShort2: "02 / СЕТЫ",
