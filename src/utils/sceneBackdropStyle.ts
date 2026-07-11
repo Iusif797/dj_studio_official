@@ -33,12 +33,10 @@ export function getSceneBackdropStyle(
   const progress = clamp((scrollFraction - enterAt) / Math.max(0.01, exitAt - enterAt), 0, 1);
   const scale = mobile ? 1.06 + progress * 0.1 : 1.1 + progress * 0.18;
   const y = mobile ? progress * 3 : progress * 8;
-  const blur = mobile ? 0 : clamp((1 - opacity) * 6, 0, 6);
-
   return {
     display: 'block',
     opacity: clamp(opacity, 0, 1),
     transform: `translate3d(0, ${y}vh, 0) scale(${scale})`,
-    filter: blur > 0 ? `blur(${blur}px)` : 'none',
+    filter: 'none',
   };
 }

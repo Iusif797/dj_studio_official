@@ -41,7 +41,7 @@ export default function LivePerformanceVideo({
   useEffect(() => {
     const video = videoRef.current;
     if (!video || opacity <= 0.02) return;
-    syncVideoTime(video, smoothTime);
+    syncVideoTime(video, Math.round(smoothTime * 12) / 12);
   }, [opacity, smoothTime, videoRef]);
 
   if (opacity <= 0.01) return null;
@@ -62,7 +62,7 @@ export default function LivePerformanceVideo({
           poster={LIVING_VIDEO_POSTER}
           muted
           playsInline
-          preload="auto"
+          preload="metadata"
         />
       </div>
       <PerformanceParallaxLayers

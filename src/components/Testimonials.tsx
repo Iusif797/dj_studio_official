@@ -171,7 +171,7 @@ export default function Testimonials({ lang, isActive, variant = 'scene' }: Test
   const data = TESTIMONIALS[lang];
   const isLiving = variant === 'living';
   const shellClass = isLiving
-    ? 'pointer-events-auto w-full rounded-none border border-white/12 bg-black/25 backdrop-blur-2xl shadow-[0_32px_120px_rgba(0,0,0,0.65)] p-4 sm:p-5 md:p-8 ring-1 ring-white/5'
+    ? 'pointer-events-auto w-full rounded-none border border-white/12 bg-black/75 shadow-[0_24px_80px_rgba(0,0,0,0.55)] p-4 sm:p-5 md:p-8 ring-1 ring-white/5'
     : `pointer-events-auto w-full ${isActive ? 'block' : 'hidden'}`;
 
   if (!isLiving && !isActive) return null;
@@ -184,14 +184,14 @@ export default function Testimonials({ lang, isActive, variant = 'scene' }: Test
       className={shellClass}
     >
       <div className="max-w-6xl mx-auto space-y-5 sm:space-y-7">
-        <div className="space-y-2 text-center md:text-left">
+        <div className="space-y-2 text-center">
           <span className="font-mono text-[7px] sm:text-[8px] tracking-[0.25em] sm:tracking-[0.3em] text-[#ff7849] uppercase block font-semibold">
             {data.sub}
           </span>
           <h2 className="font-serif text-xl sm:text-2xl md:text-4xl font-light text-white tracking-wide leading-tight">
             {data.title}
           </h2>
-          <p className="font-sans text-[10px] sm:text-xs md:text-sm text-white/55 leading-relaxed font-light max-w-2xl md:mx-0 mx-auto">
+          <p className="font-sans text-[10px] sm:text-xs md:text-sm text-white/55 leading-relaxed font-light max-w-2xl mx-auto">
             {data.desc}
           </p>
         </div>

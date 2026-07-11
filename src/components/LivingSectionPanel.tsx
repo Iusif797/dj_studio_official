@@ -31,7 +31,7 @@ export default function LivingSectionPanel({
 
   return (
     <div
-      className="w-full will-change-transform"
+      className="absolute inset-0 flex items-center justify-center will-change-transform"
       style={{
         opacity,
         transform: `translate3d(${shiftX}px, ${shiftY}px, 0) scale(${scale})`,

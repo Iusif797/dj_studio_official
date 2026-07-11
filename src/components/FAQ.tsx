@@ -161,7 +161,7 @@ export default function FAQ({ lang, isActive, variant = 'scene' }: FAQProps) {
   const [openIdx, setOpenIdx] = useState<number | null>(0);
   const isLiving = variant === 'living';
   const shellClass = isLiving
-    ? 'pointer-events-auto w-full rounded-none border border-white/12 bg-black/30 backdrop-blur-2xl shadow-[0_32px_120px_rgba(0,0,0,0.65)] p-4 sm:p-5 md:p-8 ring-1 ring-white/5'
+    ? 'pointer-events-auto w-full rounded-none border border-white/12 bg-black/78 shadow-[0_24px_80px_rgba(0,0,0,0.55)] p-4 sm:p-5 md:p-8 ring-1 ring-white/5'
     : `pointer-events-auto w-full ${isActive ? 'block' : 'hidden'}`;
 
   if (!isLiving && !isActive) return null;

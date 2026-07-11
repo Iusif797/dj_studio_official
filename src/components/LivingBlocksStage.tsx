@@ -47,13 +47,13 @@ export default function LivingBlocksStage({ lang }: LivingBlocksStageProps) {
       />
 
       <div
-        className="absolute inset-0 flex items-center justify-center px-3 sm:px-6 md:px-12 md:pl-48 md:pr-10 pt-16 pb-24 md:pt-0 md:pb-16"
+        className="absolute inset-0 flex items-center justify-center px-3 sm:px-6 md:px-20 lg:px-36 pt-16 pb-24 md:pt-0 md:pb-16"
         style={{ transform: `translate3d(${contentDrift}px, ${contentLift}px, 0)` }}
       >
         <LivingSectionPanel
           opacity={bridge.testimonialsOpacity}
           reveal={bridge.testimonialsReveal}
-          blur={device.isMobile ? bridge.testimonialsBlur * 0.35 : bridge.testimonialsBlur}
+          blur={0}
           shiftY={(1 - bridge.testimonialsOpacity) * 56 - bridge.transitionIntensity * 18}
           shiftX={-bridge.transitionIntensity * 28}
           scale={0.94 + bridge.testimonialsOpacity * 0.06}
@@ -65,7 +65,7 @@ export default function LivingBlocksStage({ lang }: LivingBlocksStageProps) {
         <LivingSectionPanel
           opacity={bridge.faqOpacity}
           reveal={bridge.faqReveal}
-          blur={device.isMobile ? 0 : (1 - bridge.faqReveal) * 10}
+          blur={0}
           shiftY={(1 - bridge.faqOpacity) * 64}
           shiftX={bridge.transitionIntensity * 24}
           scale={0.93 + bridge.faqOpacity * 0.07}

@@ -30,11 +30,11 @@ import PricingPanel from './components/PricingPanel';
 import EventFormatsPanel from './components/EventFormatsPanel';
 import VenuesSocialProof from './components/VenuesSocialProof';
 import MobileSceneNav from './components/MobileSceneNav';
-import NoiseOverlay from './components/NoiseOverlay';
 import LivingBlocksStage from './components/LivingBlocksStage';
 import StageViewport from './components/StageViewport';
 import ScrollProgressBar from './components/ScrollProgressBar';
 import ScrollContinueHint from './components/ScrollContinueHint';
+import SiteFooter from './components/SiteFooter';
 import { useScrollController } from './hooks/useScrollController';
 import { useDeviceProfile } from './hooks/useDeviceProfile';
 import { POST_MIXER_SCENES, SceneKey } from './constants/scenes';
@@ -120,6 +120,7 @@ export default function App() {
     { label: t.navVenues, num: '09', key: 'venues' },
     { label: t.navTestimonials, num: '10', key: 'testimonials' },
     { label: t.navFaq, num: '11', key: 'faq' }
+    ,{ label: lang === 'ru' ? 'КОНТАКТЫ' : lang === 'cs' ? 'KONTAKT' : 'CONTACT', num: '12', key: 'footer' }
   ];
 
   const localizedHotspots = [
@@ -191,13 +192,14 @@ export default function App() {
     return () => clearTimeout(timer);
   }, []);
 
-  const mixerStageScenes: SceneKey[] = ['intro', 'isolators', 'vu-meters', 'vinyl', 'internals', 'cables'];
-  const vuSceneActive = mixerStageScenes.includes(activeScene);
 
   useEffect(() => {
-    if (!vuSceneActive && !mixerState.synthPlaying) return;
+    if (!mixerState.synthPlaying) {
+      setVuLeft(40);
+      setVuRight(45);
+      return;
+    }
 
-    let animId: number;
     const animateNeedles = () => {
       if (mixerState.synthPlaying) {
         // Rhythmic, pulsing needle jump with added random noise
@@ -213,16 +215,12 @@ export default function App() {
 
         setVuLeft(nextLeft);
         setVuRight(nextRight);
-      } else {
-        // Slow lazy acoustic room feedback drift
-        setVuLeft(prev => Math.max(4, prev - 4 + Math.random() * 6));
-        setVuRight(prev => Math.max(4, prev - 4 + Math.random() * 6));
       }
-      animId = requestAnimationFrame(animateNeedles);
     };
     animateNeedles();
-    return () => cancelAnimationFrame(animId);
-  }, [mixerState.synthPlaying, mixerState.bassEQ, mixerState.midEQ, mixerState.masterVolume, isScratching, vuSceneActive]);
+    const intervalId = window.setInterval(animateNeedles, 80);
+    return () => window.clearInterval(intervalId);
+  }, [mixerState.synthPlaying, mixerState.bassEQ, mixerState.midEQ, mixerState.masterVolume, isScratching]);
 
   // Adjust pitch fader - changes BPM of synthesizer directly
   const adjustPitch = (pitchVal: number) => {
@@ -273,10 +271,8 @@ export default function App() {
   };
 
   return (
-    <div id="landing-root" className={`relative h-[1100svh] md:h-[1100dvh] bg-[#050505] text-[#eaeaea] overflow-x-clip transition-opacity duration-[1200ms] ease-out ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
+    <div id="landing-root" className={`relative h-[1200svh] md:h-[1200dvh] bg-[#050505] text-[#eaeaea] overflow-x-clip transition-opacity duration-[1200ms] ease-out ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
       <ScrollProgressBar />
-      <NoiseOverlay />
-
       <StageViewport
         activeScene={activeScene}
         isMobile={device.isMobile}
@@ -312,7 +308,7 @@ export default function App() {
         })}
       </div>
 
-      <div id="hud-container" className="hud-shell">
+      <div id="hud-container" className={`hud-shell transition-opacity duration-500 ${activeScene === 'footer' ? 'opacity-0' : 'opacity-100'}`}>
         
         <header id="top-branding-bar" className="w-full pointer-events-auto">
           <div className="flex w-full items-center justify-between gap-3">
@@ -736,6 +732,15 @@ export default function App() {
 
         <section className="scene-section scene-section--start" aria-label="testimonials" />
         <section className="scene-section scene-section--start" aria-label="faq" />
+
+        <section className="scene-section" aria-label="contact and footer">
+          <SiteFooter
+            lang={lang}
+            isActive={activeScene === 'footer'}
+            onBook={() => { playGlassTap(); setIsBookOpen(true); }}
+            onTop={() => scrollToSection(0)}
+          />
+        </section>
 
       </div>
 

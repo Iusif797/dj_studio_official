@@ -37,10 +37,11 @@ export function useLivingBridge(
 ): LivingBridgeState {
   const rawZone = clamp((scrollFraction - TESTIMONIALS_AT) / ZONE_SPAN, 0, 1);
   const zoneProgress = easeInOutQuart(rawZone);
-  const isActive = scrollFraction >= LIVING_ENTER_AT;
+  const footerFade = clamp(1 - (scrollFraction - 10.72) / 0.2, 0, 1);
+  const isActive = scrollFraction >= LIVING_ENTER_AT && footerFade > 0;
 
   const enterT = easeOutExpo(clamp((scrollFraction - LIVING_ENTER_AT) / 0.18, 0, 1));
-  const videoOpacity = isActive ? enterT : 0;
+  const videoOpacity = isActive ? enterT * footerFade : 0;
   const videoScale = 1.08 + zoneProgress * 0.14 + enterT * 0.04;
 
   const scrubTime =
@@ -57,10 +58,10 @@ export function useLivingBridge(
   const testimonialsExitStart = 0.48;
   const testimonialsExit = clamp(1 - (rawZone - testimonialsExitStart) / 0.22, 0, 1);
   const testimonialsOpacity =
-    scrollFraction < TESTIMONIALS_AT ? 0 : testimonialsEnter * testimonialsExit;
+    scrollFraction < TESTIMONIALS_AT ? 0 : testimonialsEnter * testimonialsExit * footerFade;
 
   const faqOpacity =
-    rawZone <= 0.44 ? 0 : easeOutExpo(clamp((rawZone - 0.44) / 0.28, 0, 1));
+    rawZone <= 0.44 ? 0 : easeOutExpo(clamp((rawZone - 0.44) / 0.28, 0, 1)) * footerFade;
 
   const transitionIntensity = clamp(
     1 - Math.abs(rawZone - 0.58) / 0.28,

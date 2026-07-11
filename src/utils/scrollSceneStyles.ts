@@ -41,15 +41,12 @@ export function getMixerStyle(scrollFraction: number, isMobile: boolean): SceneS
   const motion = getSceneMotion(scrollFraction);
   let opacity = 1;
   if (scrollFraction > 3) opacity = Math.max(0, 1 - (scrollFraction - 3) / 0.9);
-  let blur = 0;
-  if (scrollFraction > 3 && !isMobile) blur = Math.min(24, (scrollFraction - 3) * 15);
-
   return {
     top: '50%',
     left: '50%',
     transform: buildTransform(motion, motion.scale),
     opacity,
-    filter: blur > 0 ? `blur(${blur}px)` : 'none',
+    filter: 'none',
   };
 }
 
@@ -68,14 +65,12 @@ export function getTubesStyle(scrollFraction: number, isMobile: boolean): SceneS
   else scale = lerp(1.1, 8, (scrollFraction - 4) / 1.2);
 
   const motion = getSceneMotion(scrollFraction);
-  const blur = !isMobile && scrollFraction > 4.6 ? Math.min(16, (scrollFraction - 4.6) * 10) : 0;
-
   return {
     top: '50%',
     left: '50%',
     transform: buildTransform(motion, scale),
     opacity,
-    filter: blur > 0 ? `blur(${blur}px)` : 'none',
+    filter: 'none',
   };
 }
 
@@ -94,13 +89,11 @@ export function getCablesStyle(scrollFraction: number, isMobile: boolean): Scene
   else scale = lerp(1.15, 3.5, (scrollFraction - 5) / 1.2);
 
   const motion = getSceneMotion(scrollFraction);
-  const blur = !isMobile && scrollFraction > 5.4 ? Math.min(16, (scrollFraction - 5.4) * 8) : 0;
-
   return {
     top: '50%',
     left: '50%',
     transform: buildTransform(motion, scale),
     opacity,
-    filter: blur > 0 ? `blur(${blur}px)` : 'none',
+    filter: 'none',
   };
 }

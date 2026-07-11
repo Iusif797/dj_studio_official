@@ -10,11 +10,12 @@ export const SCENE_KEYS = [
   'venues',
   'testimonials',
   'faq',
+  'footer',
 ] as const;
 
 export type SceneKey = (typeof SCENE_KEYS)[number];
 
-export const POST_MIXER_SCENES: SceneKey[] = ['pricing', 'formats', 'venues', 'testimonials', 'faq'];
+export const POST_MIXER_SCENES: SceneKey[] = ['pricing', 'formats', 'venues', 'testimonials', 'faq', 'footer'];
 
 export const SCENE_POSITIONS = [
   { scale: 1.0, x: 0, y: -2, rotate: -7, rotateX: 28, rotateY: -8 },
@@ -24,6 +25,7 @@ export const SCENE_POSITIONS = [
   { scale: 12.0, x: 10, y: 15, rotate: -10, rotateX: 35, rotateY: -15 },
   { scale: 5.5, x: -15, y: -20, rotate: 18, rotateX: -20, rotateY: 40 },
   { scale: 1.15, x: -22, y: 1, rotate: 2, rotateX: 5, rotateY: -2 },
+  { scale: 1.0, x: 0, y: 0, rotate: 0, rotateX: 0, rotateY: 0 },
   { scale: 1.0, x: 0, y: 0, rotate: 0, rotateX: 0, rotateY: 0 },
   { scale: 1.0, x: 0, y: 0, rotate: 0, rotateX: 0, rotateY: 0 },
   { scale: 1.0, x: 0, y: 0, rotate: 0, rotateX: 0, rotateY: 0 },

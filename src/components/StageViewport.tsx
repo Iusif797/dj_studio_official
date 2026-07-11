@@ -1,8 +1,6 @@
-import { memo, useEffect, useState } from 'react';
+import { memo } from 'react';
 import { motion } from 'motion/react';
-import CinemagraphEffects from './CinemagraphEffects';
 import SceneHeroBackdrop from './SceneHeroBackdrop';
-import { LIVING_ENTER_AT } from '../constants/livingVideo';
 import { SceneKey } from '../constants/scenes';
 import {
   imageCables,
@@ -31,7 +29,6 @@ type StageViewportProps = {
 function StageViewport({
   activeScene,
   isMobile,
-  isReducedMotion,
   synthPlaying,
   vuLeft,
   vuRight,
@@ -39,44 +36,15 @@ function StageViewport({
   onNavigate,
 }: StageViewportProps) {
   const scrollFraction = useScrollFraction();
-  const [ambientPulse, setAmbientPulse] = useState(false);
   const mixerStyle = getMixerStyle(scrollFraction, isMobile);
   const tubesStyle = getTubesStyle(scrollFraction, isMobile);
   const cablesStyle = getCablesStyle(scrollFraction, isMobile);
   const formatsBackdrop = getSceneBackdropStyle(scrollFraction, 7, 8.35, isMobile);
   const venuesBackdrop = getSceneBackdropStyle(scrollFraction, 8, 9.35, isMobile);
-  const livingActive = scrollFraction >= LIVING_ENTER_AT;
-
-  useEffect(() => {
-    if (!synthPlaying) {
-      setAmbientPulse(false);
-      return;
-    }
-    let frame = 0;
-    const tick = () => {
-      setAmbientPulse(Math.sin(Date.now() * 0.01) > 0);
-      frame = requestAnimationFrame(tick);
-    };
-    frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
-  }, [synthPlaying]);
 
   const ambientGradient = synthPlaying
-    ? ambientPulse
-      ? 'from-red-950/20 via-[#100402]/95 to-[#050505]'
-      : 'from-orange-950/25 via-[#0b0502]/95 to-[#050505]'
+    ? 'from-orange-950/25 via-[#0b0502]/95 to-[#050505]'
     : 'from-purple-950/15 via-[#06040a]/92 to-[#050505]';
-
-  const cinemagraphScene =
-    activeScene === 'isolators'
-      ? 'touchpad'
-      : activeScene === 'vu-meters'
-        ? 'rotary'
-        : activeScene === 'pricing' || activeScene === 'formats' || activeScene === 'venues'
-          ? 'pricing'
-          : livingActive
-            ? 'pricing'
-            : 'intro';
 
   return (
     <div id="stage-viewport" className="stage-backdrop-mobile stage-viewport-shell fixed inset-0 w-full h-full overflow-hidden select-none pointer-events-none z-0">
@@ -104,12 +72,12 @@ function StageViewport({
           top: tubesStyle.top,
           left: tubesStyle.left,
           filter: tubesStyle.filter,
-          willChange: 'transform, opacity',
+          willChange: tubesStyle.opacity > 0.02 ? 'transform, opacity' : 'auto',
         }}
       >
         <div className="relative w-full h-full">
-          <img src={imageTubes} alt="" loading="lazy" decoding="async" referrerPolicy="no-referrer" className="w-full h-full object-cover select-none" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#ff7849]/20 via-transparent to-red-500/5 mix-blend-color-dodge animate-pulse" />
+          <img src={imageTubes} alt="" loading="eager" decoding="async" referrerPolicy="no-referrer" className="w-full h-full object-cover select-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#ff7849]/15 via-transparent to-red-500/5 mix-blend-color-dodge" />
           <div className="absolute inset-0 bg-black/10 mix-blend-multiply" />
           <div className="absolute inset-x-0 bottom-4 text-center z-10">
             <span className="font-mono text-[7px] text-[#ff7849] tracking-[0.25em] bg-black/85 px-2.5 py-1 border border-[#ff7849]/20 uppercase">
@@ -128,11 +96,11 @@ function StageViewport({
           top: cablesStyle.top,
           left: cablesStyle.left,
           filter: cablesStyle.filter,
-          willChange: 'transform, opacity',
+          willChange: cablesStyle.opacity > 0.02 ? 'transform, opacity' : 'auto',
         }}
       >
         <div className="relative w-full h-full">
-          <img src={imageCables} alt="" loading="lazy" decoding="async" referrerPolicy="no-referrer" className="w-full h-full object-cover select-none" />
+          <img src={imageCables} alt="" loading="eager" decoding="async" referrerPolicy="no-referrer" className="w-full h-full object-cover select-none" />
           <div className="absolute inset-x-0 bottom-4 text-center z-10">
             <span className="font-mono text-[7px] text-zinc-400 tracking-[0.25em] bg-black/85 px-2.5 py-1 border border-white/10 uppercase">
               SOLID MASS DIRECT OXYGEN-FREE RCA PORTS
@@ -149,14 +117,13 @@ function StageViewport({
           top: mixerStyle.top,
           left: mixerStyle.left,
           filter: mixerStyle.filter,
-          willChange: 'transform, opacity',
+          willChange: mixerStyle.opacity > 0.02 ? 'transform, opacity' : 'auto',
         }}
       >
         <div className="relative w-full h-full group">
-          <img src={imageMixer} alt="" loading="lazy" decoding="async" referrerPolicy="no-referrer" className="w-full h-full object-cover select-none pointer-events-none rounded-sm border border-white/5" />
-          <div className="absolute inset-x-12 top-10 bottom-10 bg-gradient-to-r from-transparent via-white/5 to-transparent skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-[1200ms] ease-out pointer-events-none" />
+          <img src={imageMixer} alt="" loading="eager" decoding="async" referrerPolicy="no-referrer" className="w-full h-full object-cover select-none pointer-events-none rounded-sm border border-white/5" />
           <div className="absolute top-[37%] left-[49.5%] -translate-x-1/2 flex flex-col items-center gap-1 opacity-90 scale-75 pointer-events-none">
-            <span className="font-mono text-[6px] tracking-widest text-[#ff7849] uppercase animate-pulse">MASTER PEAK</span>
+            <span className="font-mono text-[6px] tracking-widest text-[#ff7849] uppercase">MASTER PEAK</span>
             <div className="flex gap-1">
               <span className={`w-1 h-1 rounded-full ${vuLeft > 85 ? 'bg-red-500 shadow-[0_0_5px_rgba(239,68,68,0.8)]' : 'bg-white/10'}`} />
               <span className={`w-3 h-1 ${synthPlaying ? 'bg-[#ff7849]' : 'bg-white/15'}`} />
@@ -180,7 +147,7 @@ function StageViewport({
                   style={{ top: spot.top, left: spot.left }}
                 >
                   <span className="relative flex h-6 w-6 items-center justify-center">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75" />
+                    <span className="absolute inline-flex h-full w-full rounded-full bg-orange-400/20" />
                     <span className="relative inline-flex rounded-full h-3 w-3 bg-[#ff7849]" />
                   </span>
                   <span className="opacity-0 group-hover:opacity-100 transition-opacity bg-black/90 text-[8px] tracking-[0.2em] text-white font-mono px-2 py-1 border border-white/10 uppercase whitespace-nowrap">
@@ -195,10 +162,6 @@ function StageViewport({
 
       <SceneHeroBackdrop src={imageEventFormats} alt={t.formatsTitle} label="08 / EVENT FORMATS // CLUB · CORPORATE · PRIVATE" style={formatsBackdrop} />
       <SceneHeroBackdrop src={imageVenuesPrague} alt={t.venuesTitle} label="09 / PRAGUE VENUES // TRUSTED STAGES" style={venuesBackdrop} glow="violet" />
-
-      {!isMobile && !isReducedMotion && (
-        <CinemagraphEffects scene={cinemagraphScene} scrollProgress={scrollFraction / 6} />
-      )}
 
       {activeScene === 'isolators' && (
         <svg className="absolute inset-0 w-full h-full z-20 pointer-events-none hidden lg:block" aria-hidden>

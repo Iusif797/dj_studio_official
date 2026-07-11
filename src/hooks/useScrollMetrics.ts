@@ -9,8 +9,10 @@ let snapshot: ScrollSnapshot = { fraction: 0, progress: 0 };
 const listeners = new Set<() => void>();
 
 export function setScrollMetrics(fraction: number, progress: number) {
-  if (snapshot.fraction === fraction && snapshot.progress === progress) return;
-  snapshot = { fraction, progress };
+  const nextFraction = Math.round(fraction * 500) / 500;
+  const nextProgress = Math.round(progress * 1000) / 1000;
+  if (snapshot.fraction === nextFraction && snapshot.progress === nextProgress) return;
+  snapshot = { fraction: nextFraction, progress: nextProgress };
   listeners.forEach((listener) => listener());
 }
 

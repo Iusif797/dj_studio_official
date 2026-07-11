@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, CheckCircle, Award, Cpu, Shield } from 'lucide-react';
 import { BookingForm } from '../types';
@@ -26,6 +26,20 @@ export default function ReservationModal({ isOpen, onClose, lang = 'en' }: Booki
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,7 +79,7 @@ export default function ReservationModal({ isOpen, onClose, lang = 'en' }: Booki
   if (!isOpen) return null;
 
   return (
-    <div id="booking-drawer" className="fixed inset-0 z-50 bg-black/95 backdrop-blur-2xl flex items-start sm:items-center justify-center p-3 sm:p-4 overflow-y-auto overscroll-contain">
+    <div id="booking-drawer" role="dialog" aria-modal="true" aria-labelledby="booking-title" className="fixed inset-0 z-[70] bg-black/90 backdrop-blur-xl flex items-start lg:items-center justify-center p-0 sm:p-4 overflow-y-auto overscroll-contain">
       {/* Background overlay close */}
       <div className="absolute inset-0" onClick={() => { playGlassTap(); onClose(); }} />
 
@@ -74,13 +88,13 @@ export default function ReservationModal({ isOpen, onClose, lang = 'en' }: Booki
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.98, y: 20 }}
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className="relative w-full max-w-xl bg-[#090909] border border-white/10 p-4 sm:p-6 md:p-10 z-10 my-4 sm:my-8"
+        className="relative w-full min-h-[100svh] sm:min-h-0 max-w-4xl bg-[#090909] border-x sm:border border-white/10 p-5 pt-16 sm:p-7 md:p-10 z-10 sm:my-8 shadow-[0_32px_120px_rgba(0,0,0,0.8)]"
       >
         {/* Close button with luxury feel */}
         <button
           onClick={() => { playGlassTap(); onClose(); }}
           aria-label="Close"
-          className="absolute top-4 right-4 sm:top-6 sm:right-6 w-11 h-11 flex items-center justify-center border border-white/10 hover:border-white/30 text-white/60 hover:text-white transition-all outline-none focus:outline-none rounded-none cursor-pointer bg-black/40"
+          className="absolute z-20 top-4 right-4 sm:top-6 sm:right-6 w-11 h-11 flex items-center justify-center border border-white/10 hover:border-[#ff7849]/60 text-white/60 hover:text-white transition-all outline-none focus:outline-none rounded-none cursor-pointer bg-black/70"
         >
           <X size={14} />
         </button>
@@ -92,94 +106,94 @@ export default function ReservationModal({ isOpen, onClose, lang = 'en' }: Booki
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="space-y-6"
+              className="space-y-7"
             >
-              <div className="space-y-1">
+              <div className="space-y-2 pr-12 border-b border-white/10 pb-5">
                 <span className="font-mono text-[8px] tracking-[0.3em] text-[#ff7849] uppercase block font-medium">{t.bookSub}</span>
-                <h3 className="font-serif text-2xl md:text-3xl font-light text-white tracking-wide">{t.bookTitle}</h3>
-                <p className="font-sans text-xs text-white/40 leading-relaxed max-w-sm">
+                <h3 id="booking-title" className="font-serif text-3xl md:text-5xl leading-none font-light text-white tracking-wide">{t.bookTitle}</h3>
+                <p className="font-sans text-xs sm:text-sm text-white/45 leading-relaxed max-w-2xl">
                   {t.bookDesc}
                 </p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-5">
                 {/* Agent Name and Agency */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <div className="relative group border-b border-white/10 focus-within:border-white/30 pb-1.5 transition-all">
-                    <label className="font-mono text-[8px] tracking-[0.1em] text-white/40 group-focus-within:text-[#ff7849] uppercase block mb-1">{t.bookLabelName}</label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="booking-field">
+                    <label className="booking-field__label">{t.bookLabelName}</label>
                     <input 
                       type="text"
                       required
                       placeholder={t.bookPlaceholderName}
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full bg-transparent border-none outline-none text-xs text-white font-light placeholder-white/20 focus:ring-0 px-0 py-0.5"
+                      className="booking-field__control"
                     />
                   </div>
 
-                  <div className="relative group border-b border-white/10 focus-within:border-white/30 pb-1.5 transition-all">
-                    <label className="font-mono text-[8px] tracking-[0.1em] text-white/40 group-focus-within:text-[#ff7849] uppercase block mb-1">{t.bookLabelAgency}</label>
+                  <div className="booking-field">
+                    <label className="booking-field__label">{t.bookLabelAgency}</label>
                     <input 
                       type="text"
                       required
                       placeholder={t.bookPlaceholderAgency}
                       value={formData.agency}
                       onChange={(e) => setFormData({ ...formData, agency: e.target.value })}
-                      className="w-full bg-transparent border-none outline-none text-xs text-white font-light placeholder-white/20 focus:ring-0 px-0 py-0.5"
+                      className="booking-field__control"
                     />
                   </div>
                 </div>
 
                 {/* Email and Date */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <div className="relative group border-b border-white/10 focus-within:border-white/30 pb-1.5 transition-all">
-                    <label className="font-mono text-[8px] tracking-[0.1em] text-white/40 group-focus-within:text-[#ff7849] uppercase block mb-1">{t.bookLabelEmail}</label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="booking-field">
+                    <label className="booking-field__label">{t.bookLabelEmail}</label>
                     <input 
                       type="email"
                       required
                       placeholder={t.bookPlaceholderEmail}
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full bg-transparent border-none outline-none text-xs text-white font-light placeholder-white/20 focus:ring-0 px-0 py-0.5"
+                      className="booking-field__control"
                     />
                   </div>
 
-                  <div className="relative group border-b border-white/10 focus-within:border-white/30 pb-1.5 transition-all">
-                    <label className="font-mono text-[8px] tracking-[0.1em] text-white/40 group-focus-within:text-[#ff7849] uppercase block mb-1">{t.bookLabelDate}</label>
+                  <div className="booking-field">
+                    <label className="booking-field__label">{t.bookLabelDate}</label>
                     <input 
-                      type="text"
+                      type="date"
                       required
-                      placeholder={t.bookPlaceholderDate}
+                      min={new Date().toISOString().split('T')[0]}
                       value={formData.eventDate}
                       onChange={(e) => setFormData({ ...formData, eventDate: e.target.value })}
-                      className="w-full bg-transparent border-none outline-none text-xs text-white font-light placeholder-white/20 focus:ring-0 px-0 py-0.5"
+                      className="booking-field__control [color-scheme:dark]"
                     />
                   </div>
                 </div>
 
                 {/* Venue Name and City */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <div className="relative group border-b border-white/10 focus-within:border-white/30 pb-1.5 transition-all">
-                    <label className="font-mono text-[8px] tracking-[0.1em] text-white/40 group-focus-within:text-[#ff7849] uppercase block mb-1">{t.bookLabelVenue}</label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="booking-field">
+                    <label className="booking-field__label">{t.bookLabelVenue}</label>
                     <input 
                       type="text"
                       required
                       placeholder={t.bookPlaceholderVenue}
                       value={formData.venueName}
                       onChange={(e) => setFormData({ ...formData, venueName: e.target.value })}
-                      className="w-full bg-transparent border-none outline-none text-xs text-white font-light placeholder-white/20 focus:ring-0 px-0 py-0.5"
+                      className="booking-field__control"
                     />
                   </div>
 
-                  <div className="relative group border-b border-white/10 focus-within:border-white/30 pb-1.5 transition-all opacity-85">
-                    <label className="font-mono text-[8px] tracking-[0.1em] text-white/40 group-focus-within:text-[#ff7849] uppercase block mb-1">{t.bookLabelCity}</label>
+                  <div className="booking-field">
+                    <label className="booking-field__label">{t.bookLabelCity}</label>
                     <input 
                       type="text"
-                      readOnly
                       required
                       placeholder={t.bookPlaceholderCity}
                       value={formData.venueCity}
-                      className="w-full bg-transparent border-none outline-none text-xs text-[#ff7849] font-medium placeholder-white/20 focus:ring-0 px-0 py-0.5 cursor-not-allowed"
+                      onChange={(e) => setFormData({ ...formData, venueCity: e.target.value })}
+                      className="booking-field__control"
                     />
                   </div>
                 </div>
@@ -189,39 +203,39 @@ export default function ReservationModal({ isOpen, onClose, lang = 'en' }: Booki
                   <label className="font-mono text-[8px] tracking-[0.1em] text-white/45 uppercase block">{t.bookLabelRider}</label>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                     {[
-                      { id: 'flagship-v10', name: 'Digital Studio', desc: 'V10 & CDJ-3000' },
-                      { id: 'digital-pioneer', name: 'Standard CDJ', desc: 'CDJ-3000 & DJM' },
-                      { id: 'hybrid-live', name: 'Hybrid Synth', desc: 'DJS-1000 & Live' }
+                      { id: 'analogue-rotary', name: t.bookRiderOption1, desc: 'DJM-V10 · 3× CDJ-3000' },
+                      { id: 'digital-pioneer', name: t.bookRiderOption2, desc: 'DJM-900NXS2 · CDJ-3000' },
+                      { id: 'hybrid-live', name: t.bookRiderOption3, desc: 'DJS-1000 · Live' }
                     ].map((fin) => (
                       <button
                         key={fin.id}
                         type="button"
-                        onClick={() => { playRotaryClick(); setFormData({ ...formData, riderType: fin.id as any }); }}
-                        className={`text-left p-2.5 border transition-all rounded-none ${formData.riderType === fin.id ? 'border-[#ff7849] bg-[#ff7849]/5' : 'border-white/5 bg-black/40 hover:border-white/20'}`}
+                        onClick={() => { playRotaryClick(); setFormData({ ...formData, riderType: fin.id as BookingForm['riderType'] }); }}
+                        className={`text-left p-3.5 min-h-20 border transition-all rounded-none ${formData.riderType === fin.id ? 'border-[#ff7849] bg-[#ff7849]/8' : 'border-white/10 bg-black/40 hover:border-white/25'}`}
                       >
-                        <p className={`text-[10px] font-mono uppercase tracking-wider ${formData.riderType === fin.id ? 'text-[#ff7849]' : 'text-white'}`}>{fin.name}</p>
-                        <p className="text-[8px] text-white/30 mt-0.5">{fin.desc}</p>
+                        <p className={`text-[9px] leading-relaxed font-mono uppercase tracking-wider ${formData.riderType === fin.id ? 'text-[#ff7849]' : 'text-white'}`}>{fin.name}</p>
+                        <p className="text-[8px] text-white/35 mt-1">{fin.desc}</p>
                       </button>
                     ))}
                   </div>
                 </div>
 
                 {/* Special requests */}
-                <div className="relative group border-b border-white/10 focus-within:border-white/30 pb-1 transition-all">
-                  <label className="font-mono text-[8px] tracking-[0.1em] text-white/40 group-focus-within:text-[#ff7849] uppercase block mb-1">{t.bookLabelNotes}</label>
+                <div className="booking-field">
+                  <label className="booking-field__label">{t.bookLabelNotes}</label>
                   <textarea 
-                    rows={1}
+                    rows={3}
                     placeholder={t.bookPlaceholderNotes}
                     value={formData.notes || ''}
                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                    className="w-full bg-transparent border-none outline-none text-xs text-white font-light placeholder-white/20 focus:ring-0 px-0 py-0.5 resize-none"
+                    className="booking-field__control resize-none"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full uppercase font-mono text-xs tracking-[0.2em] bg-white text-black hover:bg-[#ff7849] hover:text-white transition-all duration-500 py-3.5 font-normal rounded-none cursor-pointer flex items-center justify-center gap-2"
+                  className="w-full min-h-14 uppercase font-mono text-[10px] sm:text-xs tracking-[0.2em] bg-white text-black hover:bg-[#ff7849] hover:text-white disabled:opacity-60 transition-all duration-500 py-4 px-3 font-medium rounded-none cursor-pointer flex items-center justify-center gap-2"
                 >
                   {isSubmitting ? (
                     <div className="w-3.5 h-3.5 border border-black/30 border-t-black rounded-full animate-spin" />
@@ -260,7 +274,7 @@ export default function ReservationModal({ isOpen, onClose, lang = 'en' }: Booki
                 <div className="flex justify-between gap-8">
                   <span>{t.bookSuccessRider}</span>
                   <span className="text-[#ff7849]">
-                    {formData.riderType === 'flagship-v10' ? t.bookSuccessRiderType1 : formData.riderType === 'digital-pioneer' ? t.bookSuccessRiderType2 : t.bookSuccessRiderType3}
+                    {formData.riderType === 'analogue-rotary' ? t.bookSuccessRiderType1 : formData.riderType === 'digital-pioneer' ? t.bookSuccessRiderType2 : t.bookSuccessRiderType3}
                   </span>
                 </div>
               </div>
@@ -284,7 +298,7 @@ export default function ReservationModal({ isOpen, onClose, lang = 'en' }: Booki
         </AnimatePresence>
 
         {/* Brand core values */}
-        <div className="border-t border-white/10 pt-5 mt-6 grid grid-cols-3 gap-2 text-center">
+        <div className="border-t border-white/10 pt-5 mt-7 grid grid-cols-3 gap-2 text-center">
           <div className="space-y-1">
             <Award className="w-3.5 h-3.5 mx-auto text-white/30" />
             <p className="font-mono text-[8px] text-white/40 uppercase">{t.bookFooterRider}</p>

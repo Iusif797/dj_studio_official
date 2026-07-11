@@ -29,7 +29,7 @@ export function useVideoElement() {
 export function syncVideoTime(video: HTMLVideoElement | null, time: number) {
   if (!video || !video.duration || Number.isNaN(video.duration)) return;
   const target = Math.min(video.duration - 0.03, Math.max(0, time));
-  if (Math.abs(video.currentTime - target) > 0.018) {
+  if (Math.abs(video.currentTime - target) > 0.075) {
     video.currentTime = target;
   }
   video.pause();
