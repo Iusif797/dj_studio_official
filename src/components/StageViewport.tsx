@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useLayoutEffect, useRef } from 'react';
 import { motion } from 'motion/react';
 import SceneHeroBackdrop from './SceneHeroBackdrop';
 import { SceneKey } from '../constants/scenes';
@@ -10,7 +10,6 @@ import {
   imageTubes,
   imageVenuesPrague,
 } from '../assets/images';
-import { useScrollFraction } from '../hooks/useScrollMetrics';
 import { getSceneBackdropStyle } from '../utils/sceneBackdropStyle';
 import { getCablesStyle, getMixerStyle, getTubesStyle } from '../utils/scrollSceneStyles';
 import { TranslationSet } from '../translations';
@@ -35,12 +34,92 @@ function StageViewport({
   t,
   onNavigate,
 }: StageViewportProps) {
-  const scrollFraction = useScrollFraction();
-  const mixerStyle = getMixerStyle(scrollFraction, isMobile);
-  const tubesStyle = getTubesStyle(scrollFraction, isMobile);
-  const cablesStyle = getCablesStyle(scrollFraction, isMobile);
-  const formatsBackdrop = getSceneBackdropStyle(scrollFraction, 7, 8.35, isMobile);
-  const venuesBackdrop = getSceneBackdropStyle(scrollFraction, 8, 9.35, isMobile);
+  const mixerLayerRef = useRef<HTMLDivElement>(null);
+  const tubesLayerRef = useRef<HTMLDivElement>(null);
+  const cablesLayerRef = useRef<HTMLDivElement>(null);
+  const formatsBackdropRef = useRef<HTMLDivElement>(null);
+  const venuesBackdropRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    let rafId = 0;
+
+    const apply = () => {
+      const scrollY = window.scrollY;
+      const vh = window.innerHeight || 1;
+      const fraction = scrollY / vh;
+
+      const mixer = getMixerStyle(fraction, isMobile);
+      const tubes = getTubesStyle(fraction, isMobile);
+      const cables = getCablesStyle(fraction, isMobile);
+      const formats = getSceneBackdropStyle(fraction, 7, 8.35, isMobile);
+      const venues = getSceneBackdropStyle(fraction, 8, 9.35, isMobile);
+
+      const ml = mixerLayerRef.current;
+      if (ml) {
+        ml.style.opacity = String(mixer.opacity);
+        ml.style.transform = mixer.transform;
+        ml.style.top = mixer.top;
+        ml.style.left = mixer.left;
+        ml.style.filter = mixer.filter;
+        ml.style.willChange = mixer.opacity > 0.02 ? 'transform, opacity' : 'auto';
+      }
+
+      const tl = tubesLayerRef.current;
+      if (tl) {
+        if (tubes.display === 'none') {
+          tl.style.display = 'none';
+        } else {
+          tl.style.display = 'block';
+          tl.style.opacity = String(tubes.opacity);
+          tl.style.transform = tubes.transform;
+          tl.style.top = tubes.top;
+          tl.style.left = tubes.left;
+          tl.style.filter = tubes.filter;
+          tl.style.willChange = tubes.opacity > 0.02 ? 'transform, opacity' : 'auto';
+        }
+      }
+
+      const cl = cablesLayerRef.current;
+      if (cl) {
+        if (cables.display === 'none') {
+          cl.style.display = 'none';
+        } else {
+          cl.style.display = 'block';
+          cl.style.opacity = String(cables.opacity);
+          cl.style.transform = cables.transform;
+          cl.style.top = cables.top;
+          cl.style.left = cables.left;
+          cl.style.filter = cables.filter;
+          cl.style.willChange = cables.opacity > 0.02 ? 'transform, opacity' : 'auto';
+        }
+      }
+
+      const fb = formatsBackdropRef.current;
+      if (fb) {
+        fb.style.opacity = String(formats.opacity ?? 1);
+        if (formats.transform) fb.style.transform = formats.transform;
+      }
+
+      const vb = venuesBackdropRef.current;
+      if (vb) {
+        vb.style.opacity = String(venues.opacity ?? 1);
+        if (venues.transform) vb.style.transform = venues.transform;
+      }
+
+      rafId = 0;
+    };
+
+    const handleScroll = () => {
+      if (!rafId) rafId = requestAnimationFrame(apply);
+    };
+
+    apply();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, [isMobile]);
 
   const ambientGradient = synthPlaying
     ? 'from-orange-950/25 via-[#0b0502]/95 to-[#050505]'
@@ -64,16 +143,9 @@ function StageViewport({
       </div>
 
       <div
+        ref={tubesLayerRef}
         className="absolute w-full h-full pointer-events-none z-28 overflow-hidden bg-black stage-layer"
-        style={{
-          display: tubesStyle.display === 'none' ? 'none' : 'block',
-          opacity: tubesStyle.opacity,
-          transform: tubesStyle.transform,
-          top: tubesStyle.top,
-          left: tubesStyle.left,
-          filter: tubesStyle.filter,
-          willChange: tubesStyle.opacity > 0.02 ? 'transform, opacity' : 'auto',
-        }}
+        style={{ display: 'none', top: '50%', left: '50%', opacity: 0 }}
       >
         <div className="relative w-full h-full">
           <img src={imageTubes} alt="" loading="eager" decoding="async" referrerPolicy="no-referrer" className="w-full h-full object-cover select-none" />
@@ -88,16 +160,9 @@ function StageViewport({
       </div>
 
       <div
+        ref={cablesLayerRef}
         className="absolute w-full h-full pointer-events-none z-26 overflow-hidden bg-[#070707] stage-layer"
-        style={{
-          display: cablesStyle.display === 'none' ? 'none' : 'block',
-          opacity: cablesStyle.opacity,
-          transform: cablesStyle.transform,
-          top: cablesStyle.top,
-          left: cablesStyle.left,
-          filter: cablesStyle.filter,
-          willChange: cablesStyle.opacity > 0.02 ? 'transform, opacity' : 'auto',
-        }}
+        style={{ display: 'none', top: '50%', left: '50%', opacity: 0 }}
       >
         <div className="relative w-full h-full">
           <img src={imageCables} alt="" loading="eager" decoding="async" referrerPolicy="no-referrer" className="w-full h-full object-cover select-none" />
@@ -110,15 +175,9 @@ function StageViewport({
       </div>
 
       <div
+        ref={mixerLayerRef}
         className="absolute w-full h-full pointer-events-auto z-30 stage-layer"
-        style={{
-          opacity: mixerStyle.opacity,
-          transform: mixerStyle.transform,
-          top: mixerStyle.top,
-          left: mixerStyle.left,
-          filter: mixerStyle.filter,
-          willChange: mixerStyle.opacity > 0.02 ? 'transform, opacity' : 'auto',
-        }}
+        style={{ top: '50%', left: '50%', opacity: 1 }}
       >
         <div className="relative w-full h-full group">
           <img src={imageMixer} alt="" loading="eager" decoding="async" referrerPolicy="no-referrer" className="w-full h-full object-cover select-none pointer-events-none rounded-sm border border-white/5" />
@@ -160,8 +219,12 @@ function StageViewport({
         </div>
       </div>
 
-      <SceneHeroBackdrop src={imageEventFormats} alt={t.formatsTitle} label="08 / EVENT FORMATS // CLUB · CORPORATE · PRIVATE" style={formatsBackdrop} />
-      <SceneHeroBackdrop src={imageVenuesPrague} alt={t.venuesTitle} label="09 / PRAGUE VENUES // TRUSTED STAGES" style={venuesBackdrop} glow="violet" />
+      <div ref={formatsBackdropRef} style={{ opacity: 0 }}>
+        <SceneHeroBackdrop src={imageEventFormats} alt={t.formatsTitle} label="08 / EVENT FORMATS // CLUB · CORPORATE · PRIVATE" style={getSceneBackdropStyle(0, 7, 8.35, isMobile)} />
+      </div>
+      <div ref={venuesBackdropRef} style={{ opacity: 0 }}>
+        <SceneHeroBackdrop src={imageVenuesPrague} alt={t.venuesTitle} label="09 / PRAGUE VENUES // TRUSTED STAGES" style={getSceneBackdropStyle(0, 8, 9.35, isMobile)} glow="violet" />
+      </div>
 
       {activeScene === 'isolators' && (
         <svg className="absolute inset-0 w-full h-full z-20 pointer-events-none hidden lg:block" aria-hidden>

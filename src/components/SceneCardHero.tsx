@@ -10,7 +10,7 @@ export default function SceneCardHero({ src, alt, badge }: SceneCardHeroProps) {
       <img src={src} alt={alt} loading="lazy" decoding="async" className="h-full w-full object-cover" />
       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent" />
       <div className="scene-scanline absolute inset-0 opacity-20" />
-      <span className="absolute left-2.5 top-2.5 font-mono text-[6px] sm:text-[7px] tracking-[0.22em] text-[#ff7849] uppercase bg-black/75 px-1.5 py-0.5 border border-[#ff7849]/30">
+      <span className="absolute left-2.5 top-2.5 font-mono text-[6px] sm:text-[7px] tracking-[0.22em] text-[#ff7849] uppercase bg-black/80 px-1.5 py-1 border border-[#ff7849]/30 leading-none">
         {badge}
       </span>
     </div>

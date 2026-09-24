@@ -1,0 +1,20 @@
+{
+  "name": "DJ Beckerman — Prague Afro House & Deep House",
+  "short_name": "Beckerman",
+  "description": "Premium Afro House, House & Deep-House DJ in Prague. Club, corporate & private events.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050505",
+  "theme_color": "#050505",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/og-cover.jpg",
+      "sizes": "1200x630",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ],
+  "lang": "en",
+  "categories": ["music", "entertainment", "events"]
+}

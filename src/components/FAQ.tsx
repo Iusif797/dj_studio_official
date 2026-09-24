@@ -30,7 +30,7 @@ const FAQ_DATA: Record<
       },
       {
         q: 'Везёте своё оборудование?',
-        a: 'Да. Базовый райдер: Pioneer DJM-V10 + 3× CDJ-3000, мониторы DJ booth, профессиональные кабели. Для частных мероприятий привожу всё сам, для клубов — работаю с их штатным оборудованием по согласованному райдеру.',
+        a: 'Да. Базовый райдер: Pioneer DJM-V10 + 3× CDJ-2000, мониторы DJ booth, профессиональные кабели. Для частных мероприятий привожу всё сам, для клубов — работаю с их штатным оборудованием по согласованному райдеру.',
       },
       {
         q: 'Работаете за пределами Праги?',
@@ -73,7 +73,7 @@ const FAQ_DATA: Record<
       },
       {
         q: 'Do you bring your own gear?',
-        a: 'Yes. Base rider: Pioneer DJM-V10 + 3× CDJ-3000, DJ booth monitors, premium cabling. For private events I bring everything myself; for clubs I work with their house gear under an agreed rider.',
+        a: 'Yes. Base rider: Pioneer DJM-V10 + 3× CDJ-2000, DJ booth monitors, premium cabling. For private events I bring everything myself; for clubs I work with their house gear under an agreed rider.',
       },
       {
         q: 'Do you work outside Prague?',
@@ -116,7 +116,7 @@ const FAQ_DATA: Record<
       },
       {
         q: 'Vozíte vlastní vybavení?',
-        a: 'Ano. Základní rider: Pioneer DJM-V10 + 3× CDJ-3000, DJ monitory, profesionální kabeláž. Na soukromé akce vozím vše vlastní; v klubech pracuji s jejich technikou podle dohodnutého rideru.',
+        a: 'Ano. Základní rider: Pioneer DJM-V10 + 3× CDJ-2000, DJ monitory, profesionální kabeláž. Na soukromé akce vozím vše vlastní; v klubech pracuji s jejich technikou podle dohodnutého rideru.',
       },
       {
         q: 'Pracujete mimo Prahu?',
@@ -235,7 +235,7 @@ export default function FAQ({ lang, isActive, variant = 'scene' }: FAQProps) {
           </div>
           <div className="flex items-center gap-2 sm:gap-2.5">
             <a
-              href="https://t.me/dj_beckerman"
+              href="https://t.me/beckerman979"
               target="_blank"
               rel="noopener noreferrer"
               className="px-3 sm:px-4 min-h-11 py-3 sm:py-2.5 border border-white/10 hover:border-[#ff7849]/40 hover:text-[#ff7849] bg-black/40 text-white/80 font-mono text-[9px] sm:text-[10px] tracking-widest uppercase transition-colors duration-300 flex items-center gap-1.5"

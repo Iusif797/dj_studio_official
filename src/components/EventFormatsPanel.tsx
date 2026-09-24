@@ -1,4 +1,4 @@
-import { ArrowRight, Building2, Disc3, Sparkles } from 'lucide-react';
+import { ArrowRight, Building2, Disc3, Heart } from 'lucide-react';
 import { motion } from 'motion/react';
 import SceneCardHero from './SceneCardHero';
 import { imageEventFormats } from '../assets/images';
@@ -12,7 +12,7 @@ type EventFormatsPanelProps = {
   reducedMotion?: boolean;
 };
 
-const icons = [Disc3, Building2, Sparkles];
+const icons = [Disc3, Building2, Heart];
 
 export default function EventFormatsPanel({ t, isActive, onNext, onBook, reducedMotion }: EventFormatsPanelProps) {
   const formats = [
@@ -30,10 +30,10 @@ export default function EventFormatsPanel({ t, isActive, onNext, onBook, reduced
     >
       <SceneCardHero src={imageEventFormats} alt={t.formatsTitle} badge="08 / LIVE FORMATS" />
 
-      <div className="space-y-1.5 px-0.5">
-        <span className="font-mono text-[8px] tracking-[0.28em] text-[#ff7849] uppercase block font-semibold">{t.formatsSub}</span>
-        <h2 className="font-serif text-xl sm:text-2xl md:text-3xl font-light text-white tracking-wide leading-tight">{t.formatsTitle}</h2>
-        <p className="font-sans text-[11px] sm:text-xs text-white/55 leading-relaxed font-light">{t.formatsDesc}</p>
+      <div className="space-y-2 px-1 pt-1">
+        <span className="font-mono text-[7.5px] sm:text-[8px] tracking-[0.26em] sm:tracking-[0.28em] text-[#ff7849] uppercase block font-semibold leading-none">{t.formatsSub}</span>
+        <h2 className="font-serif text-[20px] sm:text-2xl md:text-3xl font-light text-white tracking-wide leading-tight">{t.formatsTitle}</h2>
+        <p className="font-sans text-[11px] sm:text-xs text-white/60 leading-relaxed font-light">{t.formatsDesc}</p>
       </div>
 
       <div className="grid grid-cols-1 gap-2 mt-3 sm:gap-2.5">

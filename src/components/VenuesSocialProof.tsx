@@ -32,10 +32,10 @@ export default function VenuesSocialProof({ t, isActive, onNext, reducedMotion }
     >
       <SceneCardHero src={imageVenuesPrague} alt={t.venuesTitle} badge="09 / PRAGUE STAGES" />
 
-      <div className="space-y-1.5 px-0.5">
-        <span className="font-mono text-[8px] tracking-[0.28em] text-[#ff7849] uppercase block font-semibold">{t.venuesSub}</span>
-        <h2 className="font-serif text-xl sm:text-2xl md:text-3xl font-light text-white tracking-wide leading-tight">{t.venuesTitle}</h2>
-        <p className="font-sans text-[11px] sm:text-xs text-white/55 leading-relaxed font-light">{t.venuesDesc}</p>
+      <div className="space-y-2 px-1 pt-1">
+        <span className="font-mono text-[7.5px] sm:text-[8px] tracking-[0.26em] sm:tracking-[0.28em] text-[#ff7849] uppercase block font-semibold leading-none">{t.venuesSub}</span>
+        <h2 className="font-serif text-[20px] sm:text-2xl md:text-3xl font-light text-white tracking-wide leading-tight">{t.venuesTitle}</h2>
+        <p className="font-sans text-[11px] sm:text-xs text-white/60 leading-relaxed font-light">{t.venuesDesc}</p>
       </div>
 
       <div className="grid grid-cols-3 gap-1.5 sm:gap-2 border-y border-white/8 py-3 mt-3">
