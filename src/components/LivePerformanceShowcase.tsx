@@ -205,7 +205,7 @@ export default function LivePerformanceShowcase({ lang, onBook }: LivePerformanc
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
         <div className="lg:col-span-8 bg-[#0b0b0e] border border-white/10 rounded-sm overflow-hidden relative flex flex-col shadow-2xl">
-          <div className="relative aspect-video w-full bg-black flex items-center justify-center overflow-hidden">
+          <div className="relative aspect-[9/16] sm:aspect-[16/10] md:aspect-[16/9] w-full bg-black flex items-center justify-center overflow-hidden">
             <video
               ref={videoRef}
               key={activeVideo.src}
@@ -217,7 +217,8 @@ export default function LivePerformanceShowcase({ lang, onBook }: LivePerformanc
               muted={isMuted}
               preload="metadata"
               onTimeUpdate={handleTimeUpdate}
-              className="w-full h-full object-cover"
+              onError={() => setIsPlaying(false)}
+              className="w-full h-full object-contain sm:object-cover"
             />
 
             <div className="absolute top-4 left-4 flex items-center gap-2 z-20 pointer-events-none">

@@ -141,10 +141,10 @@ export default function Navbar({ lang, onSetLang, onBook }: NavbarProps) {
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 rounded-sm text-white/80 hover:text-white border border-white/10 bg-white/5 cursor-pointer"
+            className="lg:hidden px-2 py-1 rounded-sm text-white/80 hover:text-white border border-white/15 bg-black/40 cursor-pointer flex items-center justify-center min-w-[32px] min-h-[22px]"
             aria-label="Menu"
           >
-            {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+            {mobileMenuOpen ? <X size={12} /> : <Menu size={12} />}
           </button>
         </div>
       </div>
