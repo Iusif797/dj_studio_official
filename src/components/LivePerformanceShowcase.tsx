@@ -205,17 +205,19 @@ export default function LivePerformanceShowcase({ lang, onBook }: LivePerformanc
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
         <div className="lg:col-span-8 bg-[#0b0b0e] border border-white/10 rounded-sm overflow-hidden relative flex flex-col shadow-2xl">
-          <div className="relative aspect-[9/16] sm:aspect-[16/10] md:aspect-[16/9] w-full bg-black flex items-center justify-center overflow-hidden">
+          <div className="relative aspect-video w-full bg-black flex items-center justify-center overflow-hidden">
             <video
               ref={videoRef}
               key={activeVideo.src}
               src={activeVideo.src}
               poster={activeVideo.poster}
               playsInline
+              autoPlay
               loop
               muted={isMuted}
+              preload="metadata"
               onTimeUpdate={handleTimeUpdate}
-              className="w-full h-full object-contain sm:object-cover"
+              className="w-full h-full object-cover"
             />
 
             <div className="absolute top-4 left-4 flex items-center gap-2 z-20 pointer-events-none">
@@ -232,29 +234,35 @@ export default function LivePerformanceShowcase({ lang, onBook }: LivePerformanc
 
             <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-black/20 pointer-events-none" />
 
-            <div className="absolute bottom-0 inset-x-0 p-4 sm:p-6 z-20 flex flex-col gap-3">
+            <div className="absolute bottom-0 inset-x-0 p-3 sm:p-6 z-20 flex flex-col gap-3">
               <div
-                className="w-full h-1 bg-white/20 rounded-full cursor-pointer overflow-hidden group"
+                className="w-full h-1 sm:h-1.5 bg-white/20 rounded-full cursor-pointer overflow-hidden group touch-manipulation"
                 onClick={(e) => {
                   const video = videoRef.current;
                   if (!video || !video.duration) return;
                   const rect = e.currentTarget.getBoundingClientRect();
-                  const pos = (e.clientX - rect.left) / rect.width;
-                  video.currentTime = pos * video.duration;
+                  const clientX = 'touches' in e ? (e as any).touches[0]?.clientX : (e as any).clientX;
+                  const x = clientX ?? (e as any).clientX;
+                  const pos = (x - rect.left) / rect.width;
+                  video.currentTime = Math.max(0, Math.min(1, pos)) * video.duration;
+                }}
+                onTouchStart={(e) => {
+                  const video = videoRef.current;
+                  if (!video || !video.duration) return;
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const pos = (e.touches[0].clientX - rect.left) / rect.width;
+                  video.currentTime = Math.max(0, Math.min(1, pos)) * video.duration;
                 }}
               >
-                <div
-                  className="h-full bg-[#ff7849] transition-all duration-100 relative group-hover:h-1.5"
-                  style={{ width: `${progress}%` }}
-                />
+                <div className="h-full bg-[#ff7849] transition-all duration-100" style={{ width: `${progress}%` }} />
               </div>
 
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
+              <div className="flex items-center justify-between gap-2 sm:gap-4">
+                <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
                   <button
                     type="button"
                     onClick={togglePlay}
-                    className="w-10 h-10 rounded-full bg-white/10 hover:bg-white text-white hover:text-black border border-white/20 flex items-center justify-center transition-all cursor-pointer"
+                    className="w-11 h-11 sm:w-10 sm:h-10 rounded-full bg-white/10 hover:bg-white text-white hover:text-black border border-white/20 flex items-center justify-center transition-all cursor-pointer shrink-0"
                     aria-label={isPlaying ? 'Pause' : 'Play'}
                   >
                     {isPlaying ? <Pause size={15} /> : <Play size={15} className="ml-0.5" />}
@@ -263,28 +271,32 @@ export default function LivePerformanceShowcase({ lang, onBook }: LivePerformanc
                   <button
                     type="button"
                     onClick={toggleSound}
-                    className={`px-3.5 py-2 rounded-sm border font-mono text-[9px] tracking-wider uppercase flex items-center gap-2 transition-all cursor-pointer ${
+                    className={`px-3 sm:px-3.5 py-2.5 sm:py-2 rounded-sm border font-mono text-[8px] sm:text-[9px] tracking-wider uppercase flex items-center gap-1.5 sm:gap-2 transition-all cursor-pointer shrink-0 min-h-11 ${
                       !isMuted
                         ? 'bg-[#ff7849] text-white border-[#ff7849]'
                         : 'bg-black/60 text-white/80 border-white/20 hover:border-white/50'
                     }`}
                   >
                     {isMuted ? <VolumeX size={13} /> : <Volume2 size={13} />}
-                    <span>{isMuted ? labels.unmute : labels.unmuted}</span>
+                    <span className="hidden xs:inline sm:inline">{isMuted ? labels.unmute : labels.unmuted}</span>
+                    <span className="xs:hidden sm:hidden">{isMuted ? 'Звук' : 'Вкл'}</span>
                   </button>
 
-                  <span className="font-mono text-[9px] text-white/60 tracking-wider">
+                  <span className="font-mono text-[9px] text-white/60 tracking-wider hidden sm:inline">
                     {currentTime} / {duration}
+                  </span>
+                  <span className="font-mono text-[8px] text-white/60 tracking-wider sm:hidden">
+                    {currentTime}
                   </span>
                 </div>
 
                 <button
                   type="button"
                   onClick={toggleFullscreen}
-                  className="w-9 h-9 rounded-sm bg-black/60 hover:bg-white/10 text-white/70 hover:text-white border border-white/15 flex items-center justify-center transition-all cursor-pointer"
+                  className="w-11 h-11 sm:w-9 sm:h-9 rounded-sm bg-black/60 hover:bg-white/10 text-white/70 hover:text-white border border-white/15 flex items-center justify-center transition-all cursor-pointer shrink-0"
                   aria-label="Fullscreen"
                 >
-                  <Maximize2 size={13} />
+                  <Maximize2 size={14} />
                 </button>
               </div>
             </div>
