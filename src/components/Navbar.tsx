@@ -22,6 +22,22 @@ export default function Navbar({ lang, onSetLang, onBook }: NavbarProps) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMobileMenuOpen(false);
+    };
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) setMobileMenuOpen(false);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [mobileMenuOpen]);
+
   const navItems = {
     en: [
       { label: 'Live Footage', href: '#live-footage' },
@@ -140,11 +156,14 @@ export default function Navbar({ lang, onSetLang, onBook }: NavbarProps) {
 
           <button
             type="button"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden px-2 py-1 rounded-sm text-white/80 hover:text-white border border-white/15 bg-black/40 cursor-pointer flex items-center justify-center min-w-[32px] min-h-[22px]"
+            onClick={() => setMobileMenuOpen((prev) => !prev)}
+            className="lg:hidden relative flex items-center justify-center w-11 h-11 -mr-1 cursor-pointer touch-manipulation select-none"
             aria-label="Menu"
+            aria-expanded={mobileMenuOpen}
           >
-            {mobileMenuOpen ? <X size={12} /> : <Menu size={12} />}
+            <span className="flex items-center justify-center px-2 py-1 rounded-sm text-white/80 hover:text-white border border-white/15 bg-black/40">
+              {mobileMenuOpen ? <X size={12} /> : <Menu size={12} />}
+            </span>
           </button>
         </div>
       </div>
