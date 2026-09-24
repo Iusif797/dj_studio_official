@@ -233,18 +233,27 @@ export default function FAQ({ lang, isActive, variant = 'scene' }: FAQProps) {
             <p className="font-serif text-sm sm:text-base text-white font-light">{data.ctaTitle}</p>
             <p className="font-mono text-[9px] sm:text-[10px] text-white/45 tracking-wider uppercase">{data.ctaDesc}</p>
           </div>
-          <div className="flex items-center gap-2 sm:gap-2.5">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
             <a
               href="https://t.me/beckerman979"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-3 sm:px-4 min-h-11 py-3 sm:py-2.5 border border-white/10 hover:border-[#ff7849]/40 hover:text-[#ff7849] bg-black/40 text-white/80 font-mono text-[9px] sm:text-[10px] tracking-widest uppercase transition-colors duration-300 flex items-center gap-1.5"
+              className="px-3 sm:px-4 min-h-11 py-3 sm:py-2.5 border border-white/10 hover:border-[#2AABEE]/60 hover:text-[#2AABEE] bg-black/40 text-white/80 font-mono text-[9px] sm:text-[10px] tracking-widest uppercase transition-colors duration-300 flex items-center gap-1.5"
             >
-              <MessageCircle size={11} />
+              <MessageCircle size={11} className="text-[#2AABEE]" />
               {data.ctaTelegram}
             </a>
             <a
-              href="mailto:booking@beckerman.cz"
+              href="https://wa.me/420773975235"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 sm:px-4 min-h-11 py-3 sm:py-2.5 border border-[#25D366]/30 hover:border-[#25D366] bg-[#25D366]/10 hover:bg-[#25D366]/20 text-white font-mono text-[9px] sm:text-[10px] tracking-widest uppercase transition-colors duration-300 flex items-center gap-1.5"
+            >
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.373 0 0 5.373 0 12c0 2.112.549 4.1 1.515 5.833L.057 23.428a.5.5 0 0 0 .515.572l5.797-.947A11.94 11.94 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.882a9.87 9.87 0 0 1-5.03-1.373l-.361-.214-3.741.611.627-3.63-.235-.374A9.862 9.862 0 0 1 2.118 12c0-5.44 4.44-9.882 9.882-9.882 5.44 0 9.882 4.442 9.882 9.882 0 5.44-4.442 9.882-9.882 9.882z"/><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" fill="white"/></svg>
+              WhatsApp
+            </a>
+            <a
+              href="mailto:usifmamedov5@gmail.com"
               className="px-3 sm:px-4 min-h-11 py-3 sm:py-2.5 bg-white text-black hover:bg-[#ff7849] hover:text-white font-mono text-[9px] sm:text-[10px] tracking-widest uppercase transition-colors duration-300 flex items-center gap-1.5"
             >
               <Mail size={11} />
